@@ -5,53 +5,54 @@
 		<link rel="stylesheet" href="styles.css">
 		<title>Gacha Idle</title>
 	</head>
-	<body>
-		<!--<div class="alert">
-			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-			This is an alert box.
-		</div>-->
-
+	<body style="background-color:midnightblue">
 		<div class="topnav" id="navigateButtons">
-			<a id="cratemenu" class="active" onclick="tab('buyCrateMenu')" href=#Shop>Shop</a>
+			<a id="dailymenu" class="active" onclick="tab('colDailyMenu')" href=#Daily>Daily</a>
+			<a id="bannermenu" onclick="tab('pullBannerMenu')" href=#Shop>Shop</a>
+			<a id="dungeonmenu" onclick="tab('theDungeonMenu')" href=#Dungeon>Dungeon</a>
 			<a id="collect" onclick="tab('charCollection')" href=#Collection>Collection</a>
 			<a id="futureContent" href="#FutureContent">Future Content</a>
-			<p id="goldOwned">500 Gold</p>
+			<p id="gemsOwned" class="resource">0 Gems</p>
+			<p id="clarityPipe" class="resource">|</p>
+			<p id="goldOwned" class="resource">0 Gold</p>
+			<p id="clarityPipe" class="resource">|</p>
+			<p id="currentDay" class="resource">Day 1</p>
 		</div>
-		<div id="buyCrateMenu">
-			<button id="helpfulMessage" class="helpful-message">Helpful Messages Appear Here</button>
+		<div id="colDailyMenu">
 			<p></p>
-			<button onclick="openCrate1() ">Open Starter Crate (100 Gold)</button>
-			<div class="tooltip">
-				<button>?</button>
-				<span class="tooltiptext">9 *, 5 **, 1 ***</span>
-			</div>
+			<button onclick="incrementDay()">Go Next</button>
 			<p></p>
-			<button onclick="openCrate2()">Open Beginner Crate (10000 Gold)</button>
-			<div class="tooltip">
-				<button>?</button>
-				<span class="tooltiptext">8 *, 19 **, 5 ***</span>
+			<button id="dailyRewardButton" onclick="grabDaily()">Collect Login Reward</button>
+			<p id="dailyRewardText"></p>
+			<div id="dailyCalendarDiv"></div>
+		</div>
+		<div id="theDungeonMenu">
+			<p></p>
+			<button id="enterDungeonButton" onclick="enterDungeon()" disabled>Use Ticket</button>
+			<p></p>
+			<p id="ticketCount">You have 0 Dungeon Tickets</p>
+			<div id="theDungeon">
+				<img src="assets/dungeon_floor.png" class="background" alt="Grey Background">
+				<img src="assets/enemy_1.png" class="enemy" alt="Enemy Archer">
+				<!--img src="assets/archangel_female.png" class="hero" alt="Female Archangel"-->
 			</div>
-			
-			<p> </p>
-			
-			<!--<button id="helpfulMessage2" class="helpful-message">Helpful Messages Appear Here</button>-->
-			<p> </p>
-			<p id="charactersOwned1">You own (0/17) 1 star characters, producing 0 gold per second</p>
-				
-			<p id="charactersOwned2">You own (0/24) 2 star characters, producing 0 gold per second</p>
-			<p id="charactersOwned3">You own (0/6) 3 star characters, producing 0 gold per second</p>
-			<p id="shiniesOwned">You have a 1x multiplier from collecting 0 rainbow characters, 0 *, 0 **, 0 ***</p>
-			<p id="totalIncome">You are currently earning 0 Gold per second</p>
+		</div>
+		<div id="pullBannerMenu">
+			<div id="newbieBanner">
+				<p class="banner" id="bannerText">NEW PLAYER BANNER (GUARANTEED 3 STAR HERO!)</p>
+				<img src="assets/banner_background.png" class="background" alt="Blue Background">
+				<img src="assets/archangel_female.png" class="banner" id="bannerHero1" alt="Female Archangel">
+				<img src="assets/archangel_male.png" class="banner" id="bannerHero2" alt="Male Archangel">
+				<img src="assets/archdemon_female.png" class="banner" id="bannerHero3" alt="Female Archdemon">
+				<img src="assets/archdemon_male.png" class="banner" id="bannerHero4" alt="Male Archdemon">
+				<img src="assets/paladin_female.png" class="banner" id="bannerHero5" alt="Female Paladin">
+				<img src="assets/paladin_male.png" class="banner" id="bannerHero6" alt="Male Paladin">
+				<img src="assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
+				<button class="banner" id="pullOnBanner" onClick="pullBanner('Newbie')" disabled>1 Gem (1 pull per player)</button>
+			</div>
 		</div>
 		<div id="charCollection"> 
-			<h1 class="starterCrateText">Starter Crate</h1>
-			
-			<div class ="starterCrateWrapper" id ="starterCrateWrapper">
-			</div>
-			<h1 class="beginnerCrateText">Beginner Crate</h1>
-			
-			<div class ="beginnerCrateWrapper" id ="beginnerCrateWrapper">
-			</div>
+			<p></p>
 		</div>
 		<script src="main.js" charset="utf-8" type="text/javascript"></script>
 	</body>

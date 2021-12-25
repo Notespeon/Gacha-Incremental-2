@@ -1,90 +1,96 @@
+ul {list-style-type: none;}
+
+p {
+  color: whitesmoke
+}
+
 .starterCrateText {
-	position: absolute;
-	top: 50px;
-	left: 25px;
+  position: absolute;
+  top: 50px;
+  left: 25px;
 }
 
 .starterCrateWrapper {
-	position: absolute;
-	top: 125px;
-	left: 25px;
+  position: absolute;
+  top: 125px;
+  left: 25px;
 }
 
 .beginnerCrateText {
-	position: absolute;
-	top: 50px;
-	left: 250px;
+  position: absolute;
+  top: 50px;
+  left: 250px;
 }
 
 .beginnerCrateWrapper {
-	position: absolute;
-	top: 125px;
-	left: 250px;
+  position: absolute;
+  top: 125px;
+  left: 250px;
 }
 
 .topnav {
-	background-color: #333;
-	overflow: hidden;
+  background-color: #333;
+  overflow: hidden;
 }
 
 .topnav a {
-	float: left;
-	color: #f2f2f2;
-	text-align: center;
-	padding: 14px 16px;
-	text-decoration: none;
-	font-size: 17px;
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
 }
 
 .topnav a:hover {
-	background-color: #ddd;
-	color: black;
+  background-color: #ddd;
+  color: black;
 }
 
 .topnav a.active {
-	background-color: #4CAF50;
-	color: white;
+  background-color: #4CAF50;
+  color: white;
 }
 
 .tooltip {
-	position: relative;
-	display: inline-block;
-	/*border-bottom: 1px dotted black;*/
+  position: relative;
+  display: inline-block;
+  /*border-bottom: 1px dotted black;*/
 }
 
 .tooltip .tooltiptext {
-	visibility: hidden;
-	width: 120px;
-	background-color: #555;
-	color: #fff;
-	text-align: center;
-	padding: 5px 0;
-	border-radius: 6px;
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
 
-	position: absolute;
-	z-index: 1;
-	bottom: 85%;
-	left: 50%;
-	margin-left: -60px;
+  position: absolute;
+  z-index: 1;
+  bottom: 85%;
+  left: 50%;
+  margin-left: -60px;
 
-	opacity: 0;
-	transition: opacity 0.3s;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .tooltip .tooltiptext::after {
-	content: "";
-	position: absolute;
-	top: 100%;
-	left: 50%;
-	margin-left: -5px;
-	border-width: 5px;
-	border-style: solid;
-	border-color: #555 transparent transparent transparent;
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
 }
 
 .tooltip:hover .tooltiptext {
-	visibility: visible;
-	opacity: 1;
+  visibility: visible;
+  opacity: 1;
 }
 
 .shiny-alert {
@@ -124,9 +130,136 @@
   color: black;
 }
 
-#goldOwned {
+.resource {
   color: white;
   float: right;
   margin-right: 17.5px;
   font-size: 15px;
+}
+
+#clarityPipe {
+  color: #4CAF50;
+}
+
+.dailyCalendar {
+  padding: 10px 0;
+  background: #eee;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.dailyCalendar li {
+  list-style-type: none;
+  display: inline-block;
+  width: 13.6%;
+  text-align: center;
+  margin-bottom: 5px;
+  font-size:12px;
+  color: #777;
+}
+
+.dailyCalendar li .active {
+  padding: 5px;
+  background: #4CAF50 !important;
+  color: white !important
+}
+
+/* Add media queries for smaller screens */
+@media screen and (max-width:720px) {
+  .dailyCalendar li {width: 13.1%;}
+}
+  
+@media screen and (max-width: 420px) {
+  .dailyCalendar li {width: 12.5%;}
+  .dailyCalendar li .active {padding: 2px;}
+}
+  
+@media screen and (max-width: 290px) {
+  .dailyCalendar li {width: 12.2%;}
+}
+
+#bannerText {
+  color: yellow;
+  float: right;
+  margin-right: 17.5px;
+  font-size: 23px;
+  top: 3.5rem;
+  left: 1rem;
+}
+
+#pullOnBanner {
+	float: right;
+	margin-right: 17.5px;
+	font-size: 15px;
+	top: 22rem;
+	left: 13.5rem;
+}
+
+.background {
+  position:absolute;
+  z-index: 1;
+}
+
+.banner {
+  position:absolute;
+  z-index: 2;
+}
+
+#bannerHero1 {
+  top: 7rem;
+  left: 5rem;
+  transform: scaleX(-1);
+}
+
+#bannerHero2 {
+  top: 7rem;
+  left: 26rem;
+}
+
+#bannerHero3 {
+  top: 12rem;
+  left: 5rem;
+  transform: scaleX(-1);
+}
+
+#bannerHero4 {
+  top: 12rem;
+  left: 26rem;
+}
+
+#bannerHero5 {
+  top: 18rem;
+  left: 5rem;
+  transform: scaleX(-1);
+}
+
+#bannerHero6 {
+  top: 18rem;
+  left: 26rem;
+}
+
+#decal1 {
+  top: 12rem;
+  left: 17rem;
+}
+
+.hero {
+  position:absolute;
+  top: 30rem;
+  left: 10rem;
+  transform: scaleX(-1);
+  z-index: 2;
+}
+
+.enemy {
+  position:absolute;
+  top: 30rem;
+  left: 60rem;
+  z-index: 2;
+}
+
+.hero_image {
+	display:block !important;
+	visibility:visible;
+	z-index: 3;
 }
