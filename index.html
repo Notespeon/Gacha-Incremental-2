@@ -5,7 +5,7 @@
 		<link rel="stylesheet" href="styles.css">
 		<title>Gacha Idle</title>
 	</head>
-	<body style="background-color:midnightblue">
+	<body style="background-color:#555">
 		<div class="topnav" id="navigateButtons">
 			<a id="dailymenu" class="active" onclick="tab('colDailyMenu')" href=#Daily>Daily</a>
 			<a id="bannermenu" onclick="tab('pullBannerMenu')" href=#Shop>Shop</a>
@@ -31,28 +31,81 @@
 			<button id="enterDungeonButton" onclick="enterDungeon()" disabled>Use Ticket</button>
 			<p></p>
 			<p id="ticketCount">You have 0 Dungeon Tickets</p>
+			<p></p>
+			<p id="dungeonWarningMessage"></p>
+			<p></p>
 			<div id="theDungeon">
-				<img src="assets/dungeon_floor.png" class="background" alt="Grey Background">
-				<img src="assets/enemy_1.png" class="enemy" alt="Enemy Archer">
-				<!--img src="assets/archangel_female.png" class="hero" alt="Female Archangel"-->
+				<div id="theDungeonImages">
+					<img src="assets/SnowBackgroundNight.png" class="dgbackground" alt="Grey Background">
+					<img src="assets/enemy_1.png" class="enemy" alt="Enemy Archer">
+					<!--img src="assets/archangel_female.png" class="hero" alt="Female Archangel"-->
+				</div>
+				<progress id="squadhealth" value="100" max="100"></progress>
+				<progress id="enemyhealth" value="100" max="100"></progress>
+				<button id="attackButton" onclick="battleAttack()">Attack</button>
 			</div>
 		</div>
 		<div id="pullBannerMenu">
 			<div id="newbieBanner">
 				<p class="banner" id="bannerText">NEW PLAYER BANNER (GUARANTEED 3 STAR HERO!)</p>
-				<img src="assets/banner_background.png" class="background" alt="Blue Background">
-				<img src="assets/archangel_female.png" class="banner" id="bannerHero1" alt="Female Archangel">
-				<img src="assets/archangel_male.png" class="banner" id="bannerHero2" alt="Male Archangel">
-				<img src="assets/archdemon_female.png" class="banner" id="bannerHero3" alt="Female Archdemon">
-				<img src="assets/archdemon_male.png" class="banner" id="bannerHero4" alt="Male Archdemon">
-				<img src="assets/paladin_female.png" class="banner" id="bannerHero5" alt="Female Paladin">
-				<img src="assets/paladin_male.png" class="banner" id="bannerHero6" alt="Male Paladin">
+				<img src="assets/SnowBackground.png" class="background" alt="Blue Background">
+				<img src="assets/archangel_female.png" class="banner bannerleft bannertop" alt="Female Archangel">
+				<img src="assets/archangel_male.png" class="banner bannerright bannertop" alt="Male Archangel">
+				<img src="assets/archdemon_female.png" class="banner bannerleft bannermiddle" alt="Female Archdemon">
+				<img src="assets/archdemon_male.png" class="banner bannerright bannermiddle" alt="Male Archdemon">
+				<img src="assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
+				<img src="assets/paladin_male.png" class="banner bannerright bannerbottom" alt="Male Paladin">
 				<img src="assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
-				<button class="banner" id="pullOnBanner" onClick="pullBanner('Newbie')" disabled>1 Gem (1 pull per player)</button>
+				<button class="banner" id="pullOnBanner" onClick="pullBanner('Newbie')" disabled>1 Gem (Limited: 1 Pull)</button>
 			</div>
 		</div>
-		<div id="charCollection"> 
-			<p></p>
+		<div id="charCollection">
+			<div id="charList">
+				<p></p>
+			</div>
+			<div id="charStats">
+				<div>
+					<p></p>
+					<table>
+						<tr>
+							<th class="header">Name</th>
+							<th class="header">Star Rank</th>
+							<th class="header">Element</th>
+							<th class="header">Level</th>
+							<th class="header">Experience</th>
+							<th class="header">Hitpoints</th>
+							<th class="header">Attack</th>
+							<th class="header">Defence</th>
+							<th class="header">Resistance</th>
+							<th class="header">Description</th>
+						</tr>
+						<tr>
+							<th id="display_name"></th>
+							<th id="display_stars"></th>
+							<th id="display_element"></th>
+							<th id="display_lvl"></th>
+							<th id="display_xp"></th>
+							<th id="display_hp"></th>
+							<th id="display_atk"></th>
+							<th id="display_def"></th>
+							<th id="display_res"></th>
+							<th id="display_description"></th>
+						</tr>
+					</table>
+					<p></p>
+					<button id="selecthero" onclick="selectHero()">Select Hero</button>
+					<button id="trainhitpoints" onclick="trainHeroDisplay('hp')">Train Hitpoints</button>
+					<button id="trainattack" onclick="trainHeroDisplay('atk')">Train Attack</button>
+					<button id="traindefence" onclick="trainHeroDisplay('def')">Train Defence</button>
+					<button id="trainresistance" onclick="trainHeroDisplay('res')">Train Resistance</button>
+				</div>
+				<div id="heroTrain">
+					<p class="header" id="selectedStat">Hitpoints</p>
+					<p id="statCost">Cost: 10 Gold</p>
+					<p id="statChange">Increase: +10 Hitpoints</p>
+					<button id="trainStat" onclick="trainHero('hp')" disabled>Train</button>
+				</div>
+			</div>
 		</div>
 		<script src="main.js" charset="utf-8" type="text/javascript"></script>
 	</body>
