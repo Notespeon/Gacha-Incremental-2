@@ -39,7 +39,6 @@
 					<div id="theDungeonImages">
 						<img src="scuffed_assets/SnowBackgroundNight.png" class="dgbackground" alt="Grey Background">
 						<img src="scuffed_assets/enemy_1.png" class="enemy" alt="Enemy Archer">
-						<!--img src="assets/archangel_female.png" class="hero" alt="Female Archangel"-->
 					</div>
 					<progress id="squadhealth" value="100" max="100"></progress>
 					<progress id="enemyhealth" value="100" max="100"></progress>
@@ -48,7 +47,9 @@
 				<div id="dungeonReward">
 					<p id="goldReward"></p>
 					<p id="xpReward"></p>
-					<p id="levelUpReward"></p>
+					<p id="levelUpReward1"></p>
+					<p id="levelUpReward2"></p>
+					<p id="levelUpReward3"></p>
 					<p id="gemReward"></p>
 				</div>
 			</div>
@@ -89,8 +90,21 @@
 				<img src="scuffed_assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
 				<img src="scuffed_assets/paladin_male.png" class="banner bannerright bannerbottom" alt="Male Paladin">
 				<img src="scuffed_assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
-				<button class="banner" id="pullOnBanner" onClick="pullBanner(0)" disabled>1 Gem (Limited: 1 Pull)</button>
+				<button class="banner" id="pullOnBanner1" onClick="pullBanner(0)" disabled>1 Gem (Limited: 1 Pull)</button>		
 			</div>
+			<div id="standardBanner">
+				<p class="banner" id="bannerText">Standard Banner</p>
+				<img src="scuffed_assets/SnowBackground.png" class="background" alt="Blue Background">
+				<img src="scuffed_assets/archangel_female.png" class="banner bannerleft bannertop" alt="Female Archangel">
+				<img src="scuffed_assets/archangel_male.png" class="banner bannerright bannertop" alt="Male Archangel">
+				<img src="scuffed_assets/archdemon_female.png" class="banner bannerleft bannermiddle" alt="Female Archdemon">
+				<img src="scuffed_assets/archdemon_male.png" class="banner bannerright bannermiddle" alt="Male Archdemon">
+				<img src="scuffed_assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
+				<img src="scuffed_assets/paladin_male.png" class="banner bannerright bannerbottom" alt="Male Paladin">
+				<img src="scuffed_assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
+				<button class="banner" id="pullOnBanner2" onClick="pullBanner(1)" disabled>10 Gems</button>
+			</div>
+			<p class="banner" id="bannerReward"></p>
 		</div>
 		<div id="charCollection">
 			<div id="charList">

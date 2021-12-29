@@ -4,14 +4,16 @@ var gameData = {
 	day: 1,
 	dungeonTickets: 0,
 	owned_heros: [],
+	duplicate_heros: [],
 	unique_hero_count: 0,
 	displayed_hero: null,
 	squad_heros: [],
+	squad_hp: 0,
 	enemy: null,
 	enemysDefeated: 0,
 	bestEnemysDefeated: 0,
 	dungeonOpen: false,
-	pullCounts: [0],
+	pullCounts: [0, 0],
 	loginObtained: false
 }
 
@@ -26,7 +28,7 @@ class Hero {
 		this.basehp = hp;
 		this.hp = hp;
 		this.hpupgradelevel = 1;
-		this.currenthp = hp;
+		//this.currenthp = hp;
 		this.baseatk = attack;
 		this.atkupgradelevel = 1;
 		this.attack = attack;
@@ -62,14 +64,12 @@ var hero_pool = [
 	new Hero(6, "Percy the Precarious", 3, "Light", 120, 8, 8, 8, "A Paladin", "scuffed_assets/paladin_male.png")
 ];
 
-function updateHeroStats(id) {
-	var hero = gameData.owned_heros[id]
-	gameData.owned_heros[id].hp = hero.basehp * hero.level * hero.hpupgradelevel
-	gameData.owned_heros[id].attack = hero.baseatk * hero.level * hero.atkupgradelevel
-	gameData.owned_heros[id].defence = hero.basedef * hero.level * hero.defupgradelevel
-	gameData.owned_heros[id].resistance = hero.baseres * hero.level * hero.resupgradelevel
+function updateHeroStats(hero) {
+	hero.hp = hero.basehp * hero.level * hero.hpupgradelevel
+	hero.attack = hero.baseatk * hero.level * hero.atkupgradelevel
+	hero.defence = hero.basedef * hero.level * hero.defupgradelevel
+	hero.resistance = hero.baseres * hero.level * hero.resupgradelevel
 
-	var hero = gameData.owned_heros[id]
 	document.getElementById("display_hp").innerHTML = hero.hp
 	document.getElementById("display_atk").innerHTML = hero.attack
 	document.getElementById("display_def").innerHTML = hero.defence
@@ -78,16 +78,15 @@ function updateHeroStats(id) {
 	document.getElementById("display_xp").innerHTML = hero.experience
 }
 
-function checkLevelUp(id) {
-	var hero = gameData.owned_heros[id]
-
+function checkLevelUp(hero, slot) {
+	console.log(slot)
 	if (hero.experience >= 10*(2**(hero.level-1))) {
 		hero.level += 1
-		document.getElementById("levelUpReward").innerHTML = hero.name + " Levelled Up! Level: " + hero.level
+		document.getElementById("levelUpReward"+(slot+1)).innerHTML = hero.name + " Levelled Up! Level: " + hero.level
 	} else {
-		document.getElementById("levelUpReward").innerHTML = ""
+		document.getElementById("levelUpReward"+(slot+1)).innerHTML = ""
 	}
-	updateHeroStats(id)
+	updateHeroStats(hero)
 }
 
 function showHeroStats(id) {
@@ -141,7 +140,7 @@ function updateDungeon() {
 	parent.appendChild(background_image)
 
 	//place heros
-	for (i = 0; i < gameData.squad_heros.length; i++) {
+	for (var i = 0; i < gameData.squad_heros.length; i++) {
 		hero_image = document.createElement('img')
 		hero_image.setAttribute('src', gameData.owned_heros[gameData.squad_heros[i]].image)
 		hero_image.setAttribute('class', 'hero'+i)
@@ -203,6 +202,7 @@ function trainHero(stat) {
 		document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
 		if (stat == 'hp') {
 			gameData.owned_heros[id].hpupgradelevel += 1
+			updateHealth()
 		}
 		if (stat == 'atk') {
 			gameData.owned_heros[id].atkupgradelevel += 1
@@ -215,7 +215,8 @@ function trainHero(stat) {
 		}
 	}
 
-	updateHeroStats(id)
+	hero = gameData.owned_heros[id]
+	updateHeroStats(hero)
 
 	if (gameData.gold < 100) {
 		document.getElementById("trainStat").disabled = true
@@ -233,7 +234,7 @@ function genCalendar() {
 
 	ul.setAttribute('class', 'dailyCalendar')
 
-	for (i = 1; i < 29; i++) {
+	for (var i = 1; i < 29; i++) {
 		const li = document.createElement('li')
 		const sp = document.createElement('span')
 		if (i == calendarDay) {
@@ -303,23 +304,13 @@ function generateEnemy(level) {
 }
 
 function updateHealth() {
-	squad = gameData.owned_heros[gameData.squad_heros[0]]
-	document.getElementById("enemyhealth").value = Math.round(gameData.enemy.currenthp/gameData.enemy.hp*100)
-	document.getElementById("squadhealth").value = Math.round(squad.currenthp/squad.hp*100)
-}
-
-function battleTick(squad, enemy) {
-	enemy.currenthp -= Math.max(0, 2*squad.attack - enemy.defence)
-
-	if(enemy.style == 'defence') {
-		squad.currenthp -= Math.max(0, 2*enemy.attack - squad.defence)
-	} else {
-		squad.currenthp -= Math.max(0, 2*enemy.attack - squad.resistance)
+	squadtotalhp = 0
+	squadcurrenthp = gameData.squad_hp
+	for (var i = 0; i < gameData.squad_heros.length; i++) {
+		squadtotalhp += gameData.owned_heros[gameData.squad_heros[i]].hp
 	}
-	
-	updateHealth()
-	//document.getElementById("enemyhealth").value = Math.round(enemy.currenthp/enemy.hp*100)
-	//document.getElementById("squadhealth").value = Math.round(squad.currenthp/squad.hp*100)
+	document.getElementById("squadhealth").value = Math.round(squadcurrenthp/squadtotalhp*100)
+	document.getElementById("enemyhealth").value = Math.round(gameData.enemy.currenthp/gameData.enemy.hp*100)
 }
 
 function showEnemyStats() {
@@ -340,7 +331,7 @@ function dungeonBattle() {
 
 function gainExperience(kills) {
 	xpGained = 0
-	for (i = 0; i < kills; i++) {
+	for (var i = 0; i < kills; i++) {
 		xpGained += (i + 1)
 	}
 	document.getElementById("xpReward").innerHTML = "Experience Obtained: " + xpGained
@@ -349,12 +340,14 @@ function gainExperience(kills) {
 
 function battleDefeat() {
 	if (gameData.squad_heros.length > 0) {
-		squad = gameData.owned_heros[gameData.squad_heros[0]]
-		squad.currenthp = squad.hp
-		document.getElementById("squadhealth").value = (squad.currenthp/squad.hp*100)
-		squad.experience += gainExperience(gameData.enemysDefeated)
-		checkLevelUp(gameData.squad_heros[0])
-		updateHeroStats(gameData.squad_heros[0])
+		gameData.squad_hp = 0
+		for (var i = 0; i < gameData.squad_heros.length; i++) {
+			hero = gameData.owned_heros[gameData.squad_heros[i]]
+			gameData.squad_hp += hero.hp
+			hero.experience += gainExperience(gameData.enemysDefeated)
+			checkLevelUp(hero, i)
+		}
+		document.getElementById("squadhealth").value = 100
 	}
 	document.getElementById("goldReward").innerHTML = "Gold Obtained: " + (gameData.enemysDefeated*10)
 	gameData.gold += gameData.enemysDefeated*10
@@ -377,9 +370,31 @@ function battleDefeat() {
 	document.getElementById("enemyStats").style.display = "none"
 }
 
+function battleTick(squad, enemy) {
+	enemy.currenthp -= Math.max(0, 2*squad[0] - enemy.defence)
+
+	if(enemy.style == 'defence') {
+		gameData.squad_hp -= Math.max(0, 2*enemy.attack - squad[1])
+	} else {
+		gameData.squad_hp -= Math.max(0, 2*enemy.attack - squad[2])
+	}
+	
+	updateHealth()
+}
+
 function battleAttack() {
 	enemy = gameData.enemy
-	squad = gameData.owned_heros[gameData.squad_heros[0]]
+
+	//atk, def, res
+	squad = [0, 0, 0]
+
+	for (var i = 0; i < gameData.squad_heros.length; i++) {
+		unit = gameData.owned_heros[gameData.squad_heros[0]]
+		squad[0] += unit.attack
+		squad[1] += unit.defence
+		squad[2] += unit.resistance
+	}
+
 	battleTick(squad, enemy)
 
 	if (enemy.currenthp <= 0) {
@@ -388,7 +403,7 @@ function battleAttack() {
 		document.getElementById("enemyhealth").value = (gameData.enemy.currenthp/gameData.enemy.hp*100)
 	}
 
-	if (squad.currenthp <= 0) {
+	if (gameData.squad_hp <= 0) {
 		battleDefeat()
 	}
 }
@@ -399,7 +414,6 @@ function enterDungeon() {
 			gameData.dungeonTickets -= 1
 			//end previous dungeon session
 			battleDefeat()
-
 			//start new dungeon session
 			gameData.dungeonOpen = true
 			document.getElementById("dungeonWarningMessage").innerHTML = ""
@@ -409,6 +423,7 @@ function enterDungeon() {
 			if (gameData.dungeonTickets < 1) {
 				document.getElementById("enterDungeonButton").disabled = true
 			}
+			updateDungeon()
 			dungeonBattle()
 			document.getElementById("enemyhealth").value = (gameData.enemy.currenthp/gameData.enemy.hp*100)
 		}
@@ -467,10 +482,22 @@ function incrementDay() {
 
 function updateGems() {
 	document.getElementById("gemsOwned").innerHTML = gameData.gems + " Gems"
-	//small bug where if you go down to 0 gems and then back to 1 it lets you
-	//pull on the banner a second time
-	if (gameData.gems >= 1 && gameData.pullCounts[0] == 0) {
-		document.getElementById("pullOnBanner").disabled = false
+	if (gameData.pullCounts[0] == 0) {
+		document.getElementById("standardBanner").style.display = "none"
+		document.getElementById("newbieBanner").style.display = "inline-block"
+		if (gameData.gems >= 1) {
+			document.getElementById("pullOnBanner1").disabled = false
+		} else {
+			document.getElementById("pullOnBanner1").disabled = true
+		}
+	} else {
+		document.getElementById("newbieBanner").style.display = "none"
+		document.getElementById("standardBanner").style.display = "inline-block"
+		if (gameData.gems >= 10) {
+			document.getElementById("pullOnBanner2").disabled = false
+		} else {
+			document.getElementById("pullOnBanner2").disabled = true
+		}
 	}
 }
 
@@ -491,7 +518,7 @@ function updateCollection() {
 	parent.appendChild(document.createElement('p'))
 
 	//place each hero
-	for (i = 0; i < gameData.owned_heros.length; i++) {
+	for (var i = 0; i < gameData.owned_heros.length; i++) {
 		hero_image = document.createElement('img')
 		hero_image.setAttribute('src', gameData.owned_heros[i].image)
 		hero_image.setAttribute('id', 'heroColImage'+(i+1))
@@ -501,7 +528,7 @@ function updateCollection() {
 	}
 
 	//highlight squad heros
-	for (i = 0; i < gameData.owned_heros.length; i++) {
+	for (var i = 0; i < gameData.owned_heros.length; i++) {
 		if (gameData.squad_heros.includes(i)) {
 			document.getElementById("heroColImage"+(i+1)).style.background = '#4CAF50'
 		} else {
@@ -512,18 +539,86 @@ function updateCollection() {
 	updateDungeon()
 }
 
+function checkIfDuplicate(hero) {
+	for (var i = 0; i < gameData.owned_heros.length; i++) {
+		if (hero.id == gameData.owned_heros[i].id) {
+			return true
+		}
+	}
+	return false
+}
+
+function checkWhereDuplicate(hero) {
+	for (var i = 0; i < gameData.owned_heros.length; i++) {
+		if (hero.id == gameData.owned_heros[i].id) {
+			return i
+		}
+	}
+	return -1
+}
+
+function summon3star() {
+	rng = generateRandomNumber(0, 5)
+	result_hero = hero_pool[rng]
+
+	//check if duplicate
+	duplicateHero = checkIfDuplicate(result_hero)
+
+	if (duplicateHero) {
+		id = checkWhereDuplicate(result_hero)
+		gameData.duplicate_heros[id] += 1
+		document.getElementById("bannerReward").innerHTML = "Summoned Duplicate Hero: " + hero_pool[rng].name + ". You have " + gameData.duplicate_heros[id] + " copies."
+	} else {
+		gameData.owned_heros.push(result_hero)
+		gameData.duplicate_heros.push(0)
+		gameData.unique_hero_count += 1
+		document.getElementById("bannerReward").innerHTML = "Summoned New Hero: " + hero_pool[rng].name + "!"
+	}
+
+	updateCollection()
+}
+
+function summon0star() {
+	rng = generateRandomNumber(0, 1)
+	if (rng == 1) {
+		bannerGold = 100 + (100*gameData.bestEnemysDefeated)
+		gameData.gold += bannerGold
+		document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
+		document.getElementById("bannerReward").innerHTML = "Recieved " + bannerGold + " Gold"
+	} else {
+		gameData.dungeonTickets += 10
+		document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
+		document.getElementById("enterDungeonButton").disabled = false
+		document.getElementById("bannerReward").innerHTML = "Recieved 10 Dungeon Tickets"
+	}
+}
+
 function pullBanner(id) {
 	if(id == 0) {
 		if(gameData.gems >= 1) {
 			gameData.gems -= 1
 			gameData.pullCounts[id] += 1
 			updateGems()
-			rng = generateRandomNumber(0, 5)
-			result_hero = hero_pool[rng]
-			gameData.owned_heros.push(result_hero)
-			updateCollection()
-			gameData.unique_hero_count += 1
-			document.getElementById("pullOnBanner").disabled = true
+			summon3star()
+			document.getElementById("pullOnBanner1").disabled = true
+			document.getElementById("newbieBanner").style.display = "none"
+			document.getElementById("standardBanner").style.display = "inline-block"
+		}
+	} else if (id == 1) {
+		if(gameData.gems >= 10) {
+			gameData.gems -= 10
+			gameData.pullCounts[id] += 1
+			updateGems()
+
+			//determine star ranking
+			rng = generateRandomNumber(0, 100)
+
+			if (rng > 50) {
+				//3 star
+				summon3star()
+			} else {
+				summon0star()
+			}
 		}
 	}
 }
@@ -536,14 +631,16 @@ function hard_reset() {
 		day: 1,
 		dungeonTickets: 0,
 		owned_heros: [],
+		duplicate_heros: [],
 		unique_hero_count: 0,
 		displayed_hero: null,
 		squad_heros: [],
+		squad_hp: 0,
 		enemy: null,
 		enemysDefeated: 0,
 		bestEnemysDefeated: 0,
 		dungeonOpen: false,
-		pullCounts: [0],
+		pullCounts: [0, 0],
 		loginObtained: false
 	}
 	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
@@ -592,11 +689,6 @@ if (savegame !== null) {
 		document.getElementById("dailyRewardButton").disabled = false
 	}
 
-	//enable banner if gems are available
-	if (gameData.gems >= 1 && gameData.pullCounts[0] == 0) {
-		document.getElementById("pullOnBanner").disabled = false
-	}
-
 	//update dungeon status
 	if (!gameData.dungeonOpen) {
 		document.getElementById("theDungeon").style.display = "none"
@@ -606,6 +698,7 @@ if (savegame !== null) {
 	document.getElementById("theDungeon").style.display = "none"
 	document.getElementById("enemyStats").style.display = "none"
 	document.getElementById("enterDungeonButton").disabled = true
+	document.getElementById("standardBanner").style.display = "none"
 }
 
 /* MAIN? */

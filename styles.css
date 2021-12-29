@@ -191,12 +191,28 @@ th {
   left: 1rem;
 }
 
-#pullOnBanner {
+#pullOnBanner1 {
 	float: right;
 	margin-right: 17.5px;
 	font-size: 15px;
 	top: 23rem;
-	left: 11.5rem;
+	left: 10.5rem;
+}
+
+#pullOnBanner2 {
+	float: right;
+	margin-right: 17.5px;
+	font-size: 15px;
+	top: 23rem;
+	left: 13rem;
+}
+
+#bannerReward {
+  float: right;
+	margin-right: 17.5px;
+	font-size: 15px;
+	top: 24rem;
+	left: 1rem;
 }
 
 .background {
@@ -240,7 +256,7 @@ th {
 
 #decal1 {
   top: 12rem;
-  left: 15rem;
+  left: 13rem;
 }
 
 .hero1 {
