@@ -79,7 +79,6 @@ function updateHeroStats(hero) {
 }
 
 function checkLevelUp(hero, slot) {
-	console.log(slot)
 	if (hero.experience >= 10*(2**(hero.level-1))) {
 		hero.level += 1
 		document.getElementById("levelUpReward"+(slot+1)).innerHTML = hero.name + " Levelled Up! Level: " + hero.level
