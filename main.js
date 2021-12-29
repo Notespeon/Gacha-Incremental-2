@@ -374,6 +374,14 @@ function gainExperience(kills) {
 	return xpGained
 }
 
+function gainGold(kills) {
+	goldGained = 0
+	for (var i = 0; i < kills; i++) {
+		goldGained += (i + 1)
+	}
+	return goldGained*5
+}
+
 function battleDefeat() {
 	if (gameData.squad_heros.length > 0) {
 		gameData.squad_hp = 0
@@ -385,8 +393,8 @@ function battleDefeat() {
 		}
 		document.getElementById("squadhealth").value = 100
 	}
-	document.getElementById("goldReward").innerHTML = "Gold Obtained: " + (gameData.enemysDefeated*10)
-	gameData.gold += gameData.enemysDefeated*10
+	document.getElementById("goldReward").innerHTML = "Gold Obtained: " + (gainGold(gameData.enemysDefeated))
+	gameData.gold += gainGold(gameData.enemysDefeated)
 	updateGold()
 	
 	if (gameData.enemysDefeated > gameData.bestEnemysDefeated) {
@@ -443,6 +451,13 @@ function battleAttack() {
 		battleDefeat()
 	}
 }
+
+//battle loop
+var battleLoop = window.setInterval(function() {
+	if (gameData.dungeonOpen) {
+		battleAttack()
+	}
+}, 1000)
 
 function enterDungeon() {
 	if (gameData.dungeonTickets > 0) {
@@ -696,6 +711,8 @@ function hard_reset() {
 	updateGold()
 	document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
 
+	//tidy up menus
+	document.getElementById("bannerReward").innerHTML = ""
 	updateCollection()
 
 	//update dungeon status
