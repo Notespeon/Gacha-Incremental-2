@@ -1,2 +1,2 @@
-# Gacha-Idle
+# Go Next!
 My Incremental Gacha Game
