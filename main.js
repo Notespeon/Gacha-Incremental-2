@@ -3,6 +3,12 @@ var gameData = {
 	gems: 0,
 	day: 1,
 	dungeonTickets: 0,
+	autoDungeonTickets: 0, 
+	autoDailyClaim: 0,
+	unLimiter: 0,
+	dailyLevel: 1,
+	fastTrainer: 0,
+	bottledExp: 0,
 	owned_heros: [],
 	duplicate_heros: [],
 	unique_hero_count: 0,
@@ -343,8 +349,10 @@ function updateHealth() {
 	for (var i = 0; i < gameData.squad_heros.length; i++) {
 		squadtotalhp += gameData.owned_heros[gameData.squad_heros[i]].hp
 	}
-	document.getElementById("squadhealth").value = Math.round(squadcurrenthp/squadtotalhp*100)
-	document.getElementById("enemyhealth").value = Math.round(gameData.enemy.currenthp/gameData.enemy.hp*100)
+	if (squadtotalhp > 0) {
+		document.getElementById("squadhealth").value = Math.round(squadcurrenthp/squadtotalhp*100)
+		document.getElementById("enemyhealth").value = Math.round(gameData.enemy.currenthp/gameData.enemy.hp*100)
+	}
 }
 
 function showEnemyStats() {
@@ -394,13 +402,35 @@ function battleDefeat() {
 	document.getElementById("goldReward").innerHTML = "Gold Obtained: " + (gainGold(gameData.enemysDefeated))
 	gameData.gold += gainGold(gameData.enemysDefeated)
 	updateGold()
+
+	document.getElementById("specialReward").innerHTML = ""
 	
 	if (gameData.enemysDefeated > gameData.bestEnemysDefeated) {
-		enemyDefeatProgress = gameData.enemysDefeated - gameData.bestEnemysDefeated
-		document.getElementById("gemReward").innerHTML = "Best Clear Bonus: " + (enemyDefeatProgress) + " Gem Obtained!"
-		gameData.gems += enemyDefeatProgress
+		//reward for clearing level 5
+		if (gameData.bestEnemysDefeated < 5) {
+			if (gameData.enemysDefeated >= 5) {
+				document.getElementById("specialReward").innerHTML = "Level 5 Bonus: NEW BANNER UNLOCKED!"
+			}
+		}
+
+		//reward for clearing levle 10
+		if (gameData.bestEnemysDefeated < 10) {
+			if (gameData.enemysDefeated >= 10) {
+				document.getElementById("specialReward").innerHTML = "Level 10 Bonus: END OF CONTENT REACHED IN " + gameData.day + " Days!"
+			}
+		}
+
+		//reward gems per level cleared, increasing per 5 levels
+		rewardGems = 0
+		while(gameData.bestEnemysDefeated < gameData.enemysDefeated) {
+			rewardGems += 1 + Math.floor((1 + gameData.bestEnemysDefeated)/5)
+			gameData.bestEnemysDefeated += 1
+		}
+
+		gameData.gems += rewardGems
+		document.getElementById("gemReward").innerHTML = "Best Clear Bonus: " + (rewardGems) + " Gem(s) Obtained!"
+
 		updateGems()
-		gameData.bestEnemysDefeated = gameData.enemysDefeated
 	} else {
 		document.getElementById("gemReward").innerHTML = ""
 	}
@@ -529,9 +559,62 @@ function incrementDay() {
 	}
 }
 
+function changeBanner(bannerId) {
+	document.getElementById("newbieBanner").style.display = "none"
+	document.getElementById("standardBanner").style.display = "none"
+	document.getElementById("improvementBanner").style.display = "none"
+
+	if (bannerId == 0) {
+		document.getElementById("newbieBanner").style.display = "inline-block"
+	}
+
+	if (bannerId == 1) {
+		document.getElementById("standardBanner").style.display = "inline-block"
+	}
+
+	if (bannerId == 2) {
+		document.getElementById("improvementBanner").style.display = "inline-block"
+	}
+}
+
 function updateGems() {
+	//unlock second banner
+	if (gameData.pullCounts[0] != 0) {
+		document.getElementById("nextBanner1").disabled = false
+		document.getElementById("prevBanner2").disabled = false
+	}
+
+	//unlock third banner
+	if (gameData.bestEnemysDefeated >= 5) {
+		document.getElementById("nextBanner2").disabled = false
+		document.getElementById("prevBanner3").disabled = false
+	}
+
+	//enable newbie banner
+	if (gameData.gems >= 1 && gameData.pullCounts[0] == 0) {
+		document.getElementById("pullOnBanner1").disabled = false
+	} else {
+		document.getElementById("pullOnBanner1").disabled = true
+	}
+
+	//enable standard banner
+	if (gameData.gems >= 10 && gameData.pullCounts[0] != 0) {
+		document.getElementById("pullOnBanner2").disabled = false
+	} else {
+		document.getElementById("pullOnBanner2").disabled = true
+	}
+
+	//enable improvement banner
+	if (gameData.gems >= 10 && gameData.bestEnemysDefeated >= 5) {
+		document.getElementById("pullOnBanner3").disabled = false
+	} else {
+		document.getElementById("pullOnBanner3").disabled = true
+	}
+
+	//update gem count
 	document.getElementById("gemsOwned").innerHTML = gameData.gems + " Gems"
-	if (gameData.pullCounts[0] == 0) {
+
+	/*if (gameData.pullCounts[0] == 0) {
 		document.getElementById("standardBanner").style.display = "none"
 		document.getElementById("newbieBanner").style.display = "inline-block"
 		if (gameData.gems >= 1) {
@@ -547,7 +630,7 @@ function updateGems() {
 		} else {
 			document.getElementById("pullOnBanner2").disabled = true
 		}
-	}
+	}*/
 }
 
 function updateGold() {
@@ -665,13 +748,44 @@ function pullBanner(id) {
 			updateGems()
 
 			//determine star ranking
-			rng = generateRandomNumber(0, 100)
+			rng = generateRandomNumber(1, 100)
 
 			if (rng > 50) {
 				//3 star
 				summon3star()
 			} else {
 				summon0star()
+			}
+		}
+	} else if (id == 2) {
+		if(gameData.gems >= 10) {
+			gameData.gems -= 10
+			gameData.pullCounts[id] += 1
+			updateGems()
+
+			//determine item reward
+			rng = generateRandomNumber(0, 9)
+			rewards = [0, 0, 1, 1, 2, 2, 3, 3, 4, 5]
+			results_reward = rewards[rng]
+
+			if (results_reward == 0) {
+				gameData.autoDungeonTickets += 10
+				document.getElementById("bannerReward").innerHTML = "Recieved 10 Auto Dungeon Tickets"
+			} else if (results_reward == 1) {
+				gameData.autoDailyClaim += 10
+				document.getElementById("bannerReward").innerHTML = "Recieved 10 Auto Login-Claims"
+			} else if (results_reward == 2) {
+				gameData.fastTrainer += 10
+				document.getElementById("bannerReward").innerHTML = "Recieved 10 Dungeon Tickets"
+			} else if (results_reward == 3) {
+				gameData.bottledExp += 5
+				document.getElementById("bannerReward").innerHTML = "Recieved 5 Bottled Experience"
+			} else if (results_reward == 4) {
+				gameData.unLimiter += 1
+				document.getElementById("bannerReward").innerHTML = "Recieved 1 UN-LIMITER"
+			} else if (results_reward == 5) {
+				gameData.adailyLevel += 1
+				document.getElementById("bannerReward").innerHTML = "Recieved 1 Daily Improvement, Increasing your Daily Level!"
 			}
 		}
 	}
@@ -684,6 +798,12 @@ function hard_reset() {
 		gems: 0,
 		day: 1,
 		dungeonTickets: 0,
+		autoDungeonTickets: 0, 
+		autoDailyClaim: 0,
+		unLimiter: 0,
+		dailyLevel: 1,
+		fastTrainer: 0,
+		bottledExp: 0,
 		owned_heros: [],
 		duplicate_heros: [],
 		unique_hero_count: 0,
@@ -712,6 +832,14 @@ function hard_reset() {
 	//tidy up menus
 	document.getElementById("bannerReward").innerHTML = ""
 	updateCollection()
+
+	document.getElementById("nextBanner1").disabled = true
+	document.getElementById("prevBanner2").disabled = true
+	document.getElementById("nextBanner2").disabled = false
+	document.getElementById("prevBanner3").disabled = false
+	document.getElementById("pullOnBanner1").disabled = true
+	document.getElementById("pullOnBanner2").disabled = true
+	document.getElementById("pullOnBanner3").disabled = true
 
 	//update dungeon status
 	gameData.enemy = generateEnemy(gameData.enemysDefeated)
@@ -762,3 +890,7 @@ tab("colDailyMenu")
 genCalendar()
 document.getElementById("heroTrain").style.display = "none"
 document.getElementById("charStats").style.display = "none"
+
+document.getElementById("newbieBanner").style.display = "inline-block"
+document.getElementById("standardBanner").style.display = "none"
+document.getElementById("improvementBanner").style.display = "none"

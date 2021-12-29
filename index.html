@@ -51,6 +51,7 @@
 					<p id="levelUpReward2"></p>
 					<p id="levelUpReward3"></p>
 					<p id="gemReward"></p>
+					<p class="bigyellowtext" id="specialReward"></p>
 				</div>
 			</div>
 			<div class="aligned" id="enemyStats">
@@ -84,25 +85,50 @@
 				<p class="banner" id="bannerText">NEW PLAYER BANNER (GUARANTEED 3 STAR HERO!)</p>
 				<img src="scuffed_assets/SnowBackground.png" class="background" alt="Blue Background">
 				<img src="scuffed_assets/archangel_female.png" class="banner bannerleft bannertop" alt="Female Archangel">
-				<img src="scuffed_assets/archangel_male.png" class="banner bannerright bannertop" alt="Male Archangel">
+				<img src="scuffed_assets/archangel_male.png" class="banner flip bannerright bannertop" alt="Male Archangel">
 				<img src="scuffed_assets/archdemon_female.png" class="banner bannerleft bannermiddle" alt="Female Archdemon">
-				<img src="scuffed_assets/archdemon_male.png" class="banner bannerright bannermiddle" alt="Male Archdemon">
+				<img src="scuffed_assets/archdemon_male.png" class="banner flip bannerright bannermiddle" alt="Male Archdemon">
 				<img src="scuffed_assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
-				<img src="scuffed_assets/paladin_male.png" class="banner bannerright bannerbottom" alt="Male Paladin">
+				<img src="scuffed_assets/paladin_male.png" class="banner flip bannerright bannerbottom" alt="Male Paladin">
 				<img src="scuffed_assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
-				<button class="banner" id="pullOnBanner1" onClick="pullBanner(0)" disabled>1 Gem (Limited: 1 Pull)</button>		
+				<button class="banner bannerButton" id="pullOnBanner1" onClick="pullBanner(0)" disabled>1 Gem (Limited: 1 Pull)</button>
+				<button class="banner bannerButton nextButton" id="nextBanner1" onClick="changeBanner(1)" disabled>Next Banner</button>	
 			</div>
 			<div id="standardBanner">
 				<p class="banner" id="bannerText">Standard Banner</p>
 				<img src="scuffed_assets/SnowBackground.png" class="background" alt="Blue Background">
 				<img src="scuffed_assets/archangel_female.png" class="banner bannerleft bannertop" alt="Female Archangel">
-				<img src="scuffed_assets/archangel_male.png" class="banner bannerright bannertop" alt="Male Archangel">
+				<img src="scuffed_assets/archangel_male.png" class="banner flip bannerright bannertop" alt="Male Archangel">
 				<img src="scuffed_assets/archdemon_female.png" class="banner bannerleft bannermiddle" alt="Female Archdemon">
-				<img src="scuffed_assets/archdemon_male.png" class="banner bannerright bannermiddle" alt="Male Archdemon">
+				<img src="scuffed_assets/archdemon_male.png" class="banner flip bannerright bannermiddle" alt="Male Archdemon">
 				<img src="scuffed_assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
-				<img src="scuffed_assets/paladin_male.png" class="banner bannerright bannerbottom" alt="Male Paladin">
+				<img src="scuffed_assets/paladin_male.png" class="banner flip bannerright bannerbottom" alt="Male Paladin">
 				<img src="scuffed_assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
-				<button class="banner" id="pullOnBanner2" onClick="pullBanner(1)" disabled>10 Gems</button>
+				<img src="scuffed_assets/gold_banner.png" class="banner" id="decal2" alt="Gold Lump">
+				<img src="scuffed_assets/gold_banner.png" class="banner" id="decal3" alt="Gold Lump">
+				<img src="scuffed_assets/dungeon_ticket.png" class="banner" id="decal4" alt="Dungeon Ticket">
+				<img src="scuffed_assets/dungeon_ticket.png" class="banner" id="decal5" alt="Dungeon Ticket">
+				<button class="banner bannerButton prevButton" id="prevBanner2" onClick="changeBanner(0)" disabled>Previous Banner</button>
+				<button class="banner bannerButton" id="pullOnBanner2" onClick="pullBanner(1)" disabled>10 Gems</button>
+				<button class="banner bannerButton nextButton" id="nextBanner2" onClick="changeBanner(2)" disabled>Next Banner</button>
+			</div>
+			<div id="improvementBanner">
+				<p class="banner" id="bannerText">Improvement Banner (Rewards saved but not implemented)</p>
+				<img src="scuffed_assets/SlateBackground.png" class="background" alt="Black Background">
+				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerleft bannertop" alt="AUTO Dungeon">
+				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerright bannertop" alt="AUTO Dungeon">
+				<img src="scuffed_assets/fast_trainer.png" class="banner bannerleft bannermiddle" alt="Fast Trainer">
+				<img src="scuffed_assets/fast_trainer.png" class="banner bannerright bannermiddle" alt="Fast Trainer">
+				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerleft bannerbottom" alt="AUTO Claim">
+				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerright bannerbottom" alt="AUTO Claim">
+				<img src="scuffed_assets/un_limiter.png" class="banner" id="decal1" alt="Unlimiter">
+				<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal2" alt="Bottled Experience">
+				<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal3" alt="Bottled Experience">
+				<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal4" alt="Bottled Experience">
+				<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal5" alt="Bottled Experience">
+				<button class="banner bannerButton prevButton" id="prevBanner3" onClick="changeBanner(1)" disabled>Previous Banner</button>
+				<button class="banner bannerButton" id="pullOnBanner3" onClick="pullBanner(2)" disabled>10 Gems</button>
+				<button class="banner bannerButton nextButton" id="nextBanner3" onClick="changeBanner(3)" disabled>Next Banner</button>
 			</div>
 			<p class="banner" id="bannerReward"></p>
 		</div>
@@ -140,7 +166,7 @@
 						</tr>
 					</table>
 					<p></p>
-					<button id="selecthero" onclick="selectHero()">Select Hero</button>
+					<button id="selecthero" onclick="selectHero()">Select Hero (Max 3)</button>
 					<button id="trainhitpoints" onclick="trainHeroDisplay('hp')">Train Hitpoints</button>
 					<button id="trainattack" onclick="trainHeroDisplay('atk')">Train Attack</button>
 					<button id="traindefence" onclick="trainHeroDisplay('def')">Train Defence</button>
@@ -156,7 +182,7 @@
 		</div>
 		<div id="settingsMenu">
 			<p></p>
-			<p>Version: v0.08</p>
+			<p>Version: v0.09</p>
 			<p></p>
 			<button onclick="hard_reset()">HARD RESET!!</button>
 		</div>

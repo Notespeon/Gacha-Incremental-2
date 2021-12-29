@@ -192,19 +192,30 @@ th {
 }
 
 #pullOnBanner1 {
-	float: right;
-	margin-right: 17.5px;
-	font-size: 15px;
-	top: 23rem;
-	left: 10.5rem;
+	left: 12rem;
 }
 
 #pullOnBanner2 {
-	float: right;
-	margin-right: 17.5px;
-	font-size: 15px;
-	top: 23rem;
-	left: 13rem;
+	left: 15rem;
+}
+
+#pullOnBanner3 {
+	left: 15rem;
+}
+
+.prevButton {
+  left: 1rem;
+}
+
+.nextButton {
+  left: 26rem;
+}
+
+.bannerButton {
+  float: right;
+  margin-right: 17.5px;
+  font-size: 15px;
+  top: 23rem;
 }
 
 #bannerReward {
@@ -238,7 +249,10 @@ th {
 }
 
 .bannerright {
-  left: 23rem;
+  left: 26rem;
+}
+
+.flip {
   transform: scaleX(-1);
 }
 
@@ -256,7 +270,27 @@ th {
 
 #decal1 {
   top: 12rem;
-  left: 13rem;
+  left: 15rem;
+}
+
+#decal2 {
+  top: 16rem;
+  left: 19rem;
+}
+
+#decal3 {
+  top: 16rem;
+  left: 11rem;
+}
+
+#decal4 {
+  top: 8rem;
+  left: 19rem;
+}
+
+#decal5 {
+  top: 8rem;
+  left: 11rem;
 }
 
 .hero1 {
@@ -343,4 +377,9 @@ progress:after {
 .aligned {
   display:inline-block;
   vertical-align: top;
+}
+
+.bigyellowtext {
+  color: yellow;
+  font-size: 32px;
 }
