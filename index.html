@@ -27,22 +27,54 @@
 			<div id="dailyCalendarDiv"></div>
 		</div>
 		<div id="theDungeonMenu">
-			<p></p>
-			<button id="enterDungeonButton" onclick="enterDungeon()" disabled>Use Ticket</button>
-			<p></p>
-			<p id="ticketCount">You have 0 Dungeon Tickets</p>
-			<p></p>
-			<p id="dungeonWarningMessage"></p>
-			<p></p>
-			<div id="theDungeon">
-				<div id="theDungeonImages">
-					<img src="assets/SnowBackgroundNight.png" class="dgbackground" alt="Grey Background">
-					<img src="assets/enemy_1.png" class="enemy" alt="Enemy Archer">
-					<!--img src="assets/archangel_female.png" class="hero" alt="Female Archangel"-->
+			<div class="aligned">
+				<p></p>
+				<button id="enterDungeonButton" onclick="enterDungeon()">Use Ticket</button>
+				<p></p>
+				<p id="ticketCount">You have 0 Dungeon Tickets</p>
+				<p></p>
+				<p id="dungeonWarningMessage"></p>
+				<p></p>
+				<div id="theDungeon">
+					<div id="theDungeonImages">
+						<img src="assets/SnowBackgroundNight.png" class="dgbackground" alt="Grey Background">
+						<img src="assets/enemy_1.png" class="enemy" alt="Enemy Archer">
+						<!--img src="assets/archangel_female.png" class="hero" alt="Female Archangel"-->
+					</div>
+					<progress id="squadhealth" value="100" max="100"></progress>
+					<progress id="enemyhealth" value="100" max="100"></progress>
+					<button id="attackButton" onclick="battleAttack()">Attack</button>
 				</div>
-				<progress id="squadhealth" value="100" max="100"></progress>
-				<progress id="enemyhealth" value="100" max="100"></progress>
-				<button id="attackButton" onclick="battleAttack()">Attack</button>
+				<div id="dungeonReward">
+					<p id="goldReward"></p>
+					<p id="xpReward"></p>
+					<p id="levelUpReward"></p>
+				</div>
+			</div>
+			<div class="aligned" id="enemyStats">
+				<p></p>
+				<table>
+					<tr>
+						<th class="header">Name</th>
+						<th class="header">Element</th>
+						<th class="header">Level</th>
+						<th class="header">Hitpoints</th>
+						<th class="header">Attack</th>
+						<th class="header">Defence</th>
+						<th class="header">Style</th>
+						<th class="header">Description</th>
+					</tr>
+					<tr>
+						<th id="display_enemy_name"></th>
+						<th id="display_enemy_element"></th>
+						<th id="display_enemy_lvl"></th>
+						<th id="display_enemy_hp"></th>
+						<th id="display_enemy_atk"></th>
+						<th id="display_enemy_def"></th>
+						<th id="display_enemy_style"></th>
+						<th id="display_enemy_description"></th>
+					</tr>
+				</table>
 			</div>
 		</div>
 		<div id="pullBannerMenu">
@@ -56,7 +88,7 @@
 				<img src="assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
 				<img src="assets/paladin_male.png" class="banner bannerright bannerbottom" alt="Male Paladin">
 				<img src="assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
-				<button class="banner" id="pullOnBanner" onClick="pullBanner('Newbie')" disabled>1 Gem (Limited: 1 Pull)</button>
+				<button class="banner" id="pullOnBanner" onClick="pullBanner(0)" disabled>1 Gem (Limited: 1 Pull)</button>
 			</div>
 		</div>
 		<div id="charCollection">

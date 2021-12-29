@@ -313,3 +313,17 @@ th {
   font-size: 20px;
   color:#4CAF50
 }
+
+progress {
+  text-align: center;
+}
+
+progress:after {
+  color: whitesmoke;
+  content: attr(value)'%';
+}
+
+.aligned {
+  display:inline-block;
+  vertical-align: top;
+}
