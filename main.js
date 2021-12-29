@@ -704,7 +704,7 @@ function summon3star() {
 	if (duplicateHero) {
 		id = checkWhereDuplicate(result_hero)
 		gameData.duplicate_heros[id] += 1
-		document.getElementById("bannerReward").innerHTML = "Summoned Duplicate Hero: " + hero_pool[rng].name + ". You have " + gameData.duplicate_heros[id] + " copies."
+		document.getElementById("bannerReward").innerHTML = "Summoned Duplicate Hero: " + hero_pool[rng].name + ". You have " + gameData.duplicate_heros[id] + " duplicates."
 	} else {
 		gameData.owned_heros.push(result_hero)
 		gameData.duplicate_heros.push(0)
