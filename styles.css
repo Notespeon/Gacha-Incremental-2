@@ -218,11 +218,12 @@ th {
 
 .bannerleft {
   left: 3rem;
-  transform: scaleX(-1);
+  /*transform: scaleX(-1);*/
 }
 
 .bannerright {
   left: 23rem;
+  transform: scaleX(-1);
 }
 
 .bannertop {
@@ -246,7 +247,7 @@ th {
   position:absolute;
   top: 10rem;
   left: 3rem;
-  transform: scaleX(-1);
+  /*transform: scaleX(-1);*/
   z-index: 2;
 }
 
@@ -254,7 +255,7 @@ th {
   position:absolute;
   top: 15rem;
   left: 3rem;
-  transform: scaleX(-1);
+  /*transform: scaleX(-1);*/
   z-index: 2;
 }
 
@@ -262,7 +263,7 @@ th {
   position:absolute;
   top: 20rem;
   left: 3rem;
-  transform: scaleX(-1);
+  /*transform: scaleX(-1);*/
   z-index: 2;
 }
 

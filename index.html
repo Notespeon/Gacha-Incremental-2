@@ -11,7 +11,7 @@
 			<a id="bannermenu" onclick="tab('pullBannerMenu')" href=#Shop>Shop</a>
 			<a id="dungeonmenu" onclick="tab('theDungeonMenu')" href=#Dungeon>Dungeon</a>
 			<a id="collect" onclick="tab('charCollection')" href=#Collection>Collection</a>
-			<a id="futureContent" href="#FutureContent">Future Content</a>
+			<a id="settings" onclick="tab('settingsMenu')" href="#Settings">Settings</a>
 			<p id="gemsOwned" class="resource">0 Gems</p>
 			<p id="clarityPipe" class="resource">|</p>
 			<p id="goldOwned" class="resource">0 Gold</p>
@@ -22,7 +22,7 @@
 			<p></p>
 			<button onclick="incrementDay()">Go Next</button>
 			<p></p>
-			<button id="dailyRewardButton" onclick="grabDaily()">Collect Login Reward</button>
+			<button id="dailyRewardButton" onclick="grabDaily()" disabled>Collect Login Reward</button>
 			<p id="dailyRewardText"></p>
 			<div id="dailyCalendarDiv"></div>
 		</div>
@@ -37,8 +37,8 @@
 				<p></p>
 				<div id="theDungeon">
 					<div id="theDungeonImages">
-						<img src="assets/SnowBackgroundNight.png" class="dgbackground" alt="Grey Background">
-						<img src="assets/enemy_1.png" class="enemy" alt="Enemy Archer">
+						<img src="scuffed_assets/SnowBackgroundNight.png" class="dgbackground" alt="Grey Background">
+						<img src="scuffed_assets/enemy_1.png" class="enemy" alt="Enemy Archer">
 						<!--img src="assets/archangel_female.png" class="hero" alt="Female Archangel"-->
 					</div>
 					<progress id="squadhealth" value="100" max="100"></progress>
@@ -49,6 +49,7 @@
 					<p id="goldReward"></p>
 					<p id="xpReward"></p>
 					<p id="levelUpReward"></p>
+					<p id="gemReward"></p>
 				</div>
 			</div>
 			<div class="aligned" id="enemyStats">
@@ -80,14 +81,14 @@
 		<div id="pullBannerMenu">
 			<div id="newbieBanner">
 				<p class="banner" id="bannerText">NEW PLAYER BANNER (GUARANTEED 3 STAR HERO!)</p>
-				<img src="assets/SnowBackground.png" class="background" alt="Blue Background">
-				<img src="assets/archangel_female.png" class="banner bannerleft bannertop" alt="Female Archangel">
-				<img src="assets/archangel_male.png" class="banner bannerright bannertop" alt="Male Archangel">
-				<img src="assets/archdemon_female.png" class="banner bannerleft bannermiddle" alt="Female Archdemon">
-				<img src="assets/archdemon_male.png" class="banner bannerright bannermiddle" alt="Male Archdemon">
-				<img src="assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
-				<img src="assets/paladin_male.png" class="banner bannerright bannerbottom" alt="Male Paladin">
-				<img src="assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
+				<img src="scuffed_assets/SnowBackground.png" class="background" alt="Blue Background">
+				<img src="scuffed_assets/archangel_female.png" class="banner bannerleft bannertop" alt="Female Archangel">
+				<img src="scuffed_assets/archangel_male.png" class="banner bannerright bannertop" alt="Male Archangel">
+				<img src="scuffed_assets/archdemon_female.png" class="banner bannerleft bannermiddle" alt="Female Archdemon">
+				<img src="scuffed_assets/archdemon_male.png" class="banner bannerright bannermiddle" alt="Male Archdemon">
+				<img src="scuffed_assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
+				<img src="scuffed_assets/paladin_male.png" class="banner bannerright bannerbottom" alt="Male Paladin">
+				<img src="scuffed_assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
 				<button class="banner" id="pullOnBanner" onClick="pullBanner(0)" disabled>1 Gem (Limited: 1 Pull)</button>
 			</div>
 		</div>
@@ -138,6 +139,10 @@
 					<button id="trainStat" onclick="trainHero('hp')" disabled>Train</button>
 				</div>
 			</div>
+		</div>
+		<div id="settingsMenu">
+			<p></p>
+			<button onclick="hard_reset()">HARD RESET!!</button>
 		</div>
 		<script src="main.js" charset="utf-8" type="text/javascript"></script>
 	</body>

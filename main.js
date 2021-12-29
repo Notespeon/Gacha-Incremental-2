@@ -9,8 +9,10 @@ var gameData = {
 	squad_heros: [],
 	enemy: null,
 	enemysDefeated: 0,
+	bestEnemysDefeated: 0,
 	dungeonOpen: false,
-	pullCounts: [0]
+	pullCounts: [0],
+	loginObtained: false
 }
 
 class Hero {
@@ -52,12 +54,12 @@ class Enemy {
 }
 
 var hero_pool = [
-	new Hero(1, "Sarah the Saintly", 3, "Light", 100, 10, 10, 5, "An Archangel", "assets/archangel_female.png"),
-	new Hero(2, "Samuel the Special", 3, "Light", 100, 10, 10, 5, "An Archangel", "assets/archangel_male.png"),
-	new Hero(3, "Debra the Daring", 3, "Dark", 80, 12, 5, 10, "An Archdemon", "assets/archdemon_female.png"),
-	new Hero(4, "Daniel the Duke", 3, "Dark", 80, 12, 5, 10, "An Archdemon", "assets/archdemon_male.png"),
-	new Hero(5, "Patricia the Painless", 3, "Light", 120, 8, 8, 8, "A Paladin", "assets/paladin_female.png"),
-	new Hero(6, "Percy the Precarious", 3, "Light", 120, 8, 8, 8, "A Paladin", "assets/paladin_male.png")
+	new Hero(1, "Sarah the Saintly", 3, "Light", 100, 10, 10, 5, "An Archangel", "scuffed_assets/archangel_female.png"),
+	new Hero(2, "Samuel the Special", 3, "Light", 100, 10, 10, 5, "An Archangel", "scuffed_assets/archangel_male.png"),
+	new Hero(3, "Debra the Daring", 3, "Dark", 80, 12, 5, 10, "An Archdemon", "scuffed_assets/archdemon_female.png"),
+	new Hero(4, "Daniel the Duke", 3, "Dark", 80, 12, 5, 10, "An Archdemon", "scuffed_assets/archdemon_male.png"),
+	new Hero(5, "Patricia the Painless", 3, "Light", 120, 8, 8, 8, "A Paladin", "scuffed_assets/paladin_female.png"),
+	new Hero(6, "Percy the Precarious", 3, "Light", 120, 8, 8, 8, "A Paladin", "scuffed_assets/paladin_male.png")
 ];
 
 function updateHeroStats(id) {
@@ -134,7 +136,7 @@ function updateDungeon() {
 
 	//set background
 	background_image = document.createElement('img')
-	background_image.setAttribute('src', 'assets/SnowBackgroundNight.png')
+	background_image.setAttribute('src', 'scuffed_assets/SnowBackgroundNight.png')
 	background_image.setAttribute('class', 'dgbackground')
 	parent.appendChild(background_image)
 
@@ -147,14 +149,16 @@ function updateDungeon() {
 	}
 
 	//place enemies
-	showEnemyStats()
-	enemy_image = document.createElement('img')
-	enemy_image.setAttribute('src', 'assets/enemy_1.png')
-	enemy_image.setAttribute('class', 'enemy')
-	parent.appendChild(enemy_image)
+	if (gameData.enemy != null && gameData.squad_heros.length > 0) {
+		showEnemyStats()
+		enemy_image = document.createElement('img')
+		enemy_image.setAttribute('src', 'scuffed_assets/enemy_1.png')
+		enemy_image.setAttribute('class', 'enemy')
+		parent.appendChild(enemy_image)
 
-	//update health
-	updateHealth()
+		//update health
+		updateHealth()
+	}
 }
 
 function trainHeroDisplay(stat) {
@@ -254,10 +258,12 @@ function tab(tab) {
 	document.getElementById("pullBannerMenu").style.display = "none"
 	document.getElementById("charCollection").style.display = "none"
 	document.getElementById("theDungeonMenu").style.display = "none"
+	document.getElementById("settingsMenu").style.display = "none"
 
 	document.getElementById("bannermenu").className = "inactive"
 	document.getElementById("dailymenu").className = "inactive"
 	document.getElementById("collect").className = "inactive"
+	document.getElementById("settings").className = "inactive"
 	document.getElementById("dungeonmenu").className = "inactive"
 
 	document.getElementById(tab).style.display = "inline-block"
@@ -270,6 +276,8 @@ function tab(tab) {
 		document.getElementById("dailymenu").className = "active"
 	} else if (tab == "theDungeonMenu") {
 		document.getElementById("dungeonmenu").className = "active"
+	} else if (tab == "settingsMenu") {
+		document.getElementById("settings").className = "active"
 	}
 }
 
@@ -351,9 +359,19 @@ function battleDefeat() {
 	document.getElementById("goldReward").innerHTML = "Gold Obtained: " + (gameData.enemysDefeated*10)
 	gameData.gold += gameData.enemysDefeated*10
 	document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
-	gameData.enemysDefeated = 0
+	
+	if (gameData.enemysDefeated > gameData.bestEnemysDefeated) {
+		enemyDefeatProgress = gameData.enemysDefeated - gameData.bestEnemysDefeated
+		document.getElementById("gemReward").innerHTML = "Best Clear Bonus: " + (enemyDefeatProgress) + " Gem Obtained!"
+		gameData.gems += enemyDefeatProgress
+		updateGems()
+		gameData.bestEnemysDefeated = gameData.enemysDefeated
+	} else {
+		document.getElementById("gemReward").innerHTML = ""
+	}
 
 	//close the dungeon
+	gameData.enemysDefeated = 0
 	gameData.dungeonOpen = false
 	document.getElementById("theDungeon").style.display = "none"
 	document.getElementById("enemyStats").style.display = "none"
@@ -401,6 +419,7 @@ function enterDungeon() {
 }
 
 function grabDaily() {
+	gameData.loginObtained = true
 	document.getElementById("dailyRewardButton").disabled = true
 	if (gameData.day % 28 == 0) {
 		gameData.gems += 5
@@ -417,8 +436,9 @@ function grabDaily() {
 		document.getElementById("enterDungeonButton").disabled = false
 	}
 	else {
-		gameData.gold += 10
-		document.getElementById("dailyRewardText").innerHTML = "Recieved 10 Gold"
+		dailyGold = 10 + (10*gameData.bestEnemysDefeated)
+		gameData.gold += dailyGold
+		document.getElementById("dailyRewardText").innerHTML = "Recieved " + dailyGold + " Gold"
 		document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
 	}
 }
@@ -432,10 +452,11 @@ function incrementDay() {
 
 	//update currencies
 	document.getElementById("currentDay").innerHTML = "Day " + gameData.day
-	document.getElementById("gemsOwned").innerHTML = gameData.gems + " Gem"
+	updateGems()
 	document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
 
 	//enable login reward
+	gameData.loginObtained = false
 	document.getElementById("dailyRewardButton").disabled = false
 
 	//end dungeon session
@@ -445,7 +466,7 @@ function incrementDay() {
 }
 
 function updateGems() {
-	document.getElementById("gemsOwned").innerHTML = gameData.gems + " Gem"
+	document.getElementById("gemsOwned").innerHTML = gameData.gems + " Gems"
 	//small bug where if you go down to 0 gems and then back to 1 it lets you
 	//pull on the banner a second time
 	if (gameData.gems >= 1 && gameData.pullCounts[0] == 0) {
@@ -492,7 +513,7 @@ function updateCollection() {
 }
 
 function pullBanner(id) {
-	if(id = 0) {
+	if(id == 0) {
 		if(gameData.gems >= 1) {
 			gameData.gems -= 1
 			gameData.pullCounts[id] += 1
@@ -507,25 +528,74 @@ function pullBanner(id) {
 	}
 }
 
+function hard_reset() {
+	localStorage.clear()
+	gameData = {
+		gold: 100,
+		gems: 0,
+		day: 1,
+		dungeonTickets: 0,
+		owned_heros: [],
+		unique_hero_count: 0,
+		displayed_hero: null,
+		squad_heros: [],
+		enemy: null,
+		enemysDefeated: 0,
+		bestEnemysDefeated: 0,
+		dungeonOpen: false,
+		pullCounts: [0],
+		loginObtained: false
+	}
+	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
+
+	//reset daily progress
+	document.getElementById("dailyRewardButton").disabled = false
+	genCalendar()
+
+	//update currencies
+	document.getElementById("currentDay").innerHTML = "Day " + gameData.day
+	updateGems()
+	document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
+	document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
+
+	updateCollection()
+
+	//update dungeon status
+	gameData.enemy = generateEnemy(gameData.enemysDefeated)
+	document.getElementById("theDungeon").style.display = "none"
+	document.getElementById("enemyStats").style.display = "none"
+
+}
+
 //save data stuff
 var saveGameLoop = window.setInterval(function() {
 	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
 	console.log('saving...')
 }, 15000)
 
-
+//load data stuff
 var savegame = JSON.parse(localStorage.getItem('gachaIncrementalSave'))
+console.log(savegame)
 if (savegame !== null) {
 	gameData = savegame
-	console.log(gameData)
 
 	//update currencies
 	document.getElementById("currentDay").innerHTML = "Day " + gameData.day
-	document.getElementById("gemsOwned").innerHTML = gameData.gems + " Gem"
+	updateGems()
 	document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
 	document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
 
 	updateCollection()
+
+	//enable daily if unobtained
+	if (!gameData.loginObtained) {
+		document.getElementById("dailyRewardButton").disabled = false
+	}
+
+	//enable banner if gems are available
+	if (gameData.gems >= 1 && gameData.pullCounts[0] == 0) {
+		document.getElementById("pullOnBanner").disabled = false
+	}
 
 	//update dungeon status
 	if (!gameData.dungeonOpen) {
