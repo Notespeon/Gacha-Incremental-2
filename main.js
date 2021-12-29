@@ -69,12 +69,10 @@ function updateHeroStats(hero) {
 	hero.defence = hero.basedef * hero.level * hero.defupgradelevel
 	hero.resistance = hero.baseres * hero.level * hero.resupgradelevel
 
-	document.getElementById("display_hp").innerHTML = hero.hp
-	document.getElementById("display_atk").innerHTML = hero.attack
-	document.getElementById("display_def").innerHTML = hero.defence
-	document.getElementById("display_res").innerHTML = hero.resistance
-	document.getElementById("display_lvl").innerHTML = hero.level
-	document.getElementById("display_xp").innerHTML = hero.experience
+	//update hero stats in collection
+	if (gameData.displayed_hero != null) {
+		showHeroStats(gameData.displayed_hero)
+	}
 }
 
 function checkLevelUp(hero, slot) {
