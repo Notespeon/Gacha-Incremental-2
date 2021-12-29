@@ -28,7 +28,6 @@ class Hero {
 		this.basehp = hp;
 		this.hp = hp;
 		this.hpupgradelevel = 1;
-		//this.currenthp = hp;
 		this.baseatk = attack;
 		this.atkupgradelevel = 1;
 		this.attack = attack;
@@ -79,8 +78,16 @@ function updateHeroStats(hero) {
 }
 
 function checkLevelUp(hero, slot) {
-	if (hero.experience >= 10*(2**(hero.level-1))) {
+	var levellingUp = false
+	if (hero.experience >= 10*(2**(hero.level-1)) && hero.level < 10) {
+		levellingUp = true
+	}
+
+	while (hero.experience >= 10*(2**(hero.level-1)) && hero.level < 10) {
 		hero.level += 1
+	}
+
+	if (levellingUp) {
 		document.getElementById("levelUpReward"+(slot+1)).innerHTML = hero.name + " Levelled Up! Level: " + hero.level
 	} else {
 		document.getElementById("levelUpReward"+(slot+1)).innerHTML = ""
@@ -162,64 +169,94 @@ function updateDungeon() {
 function trainHeroDisplay(stat) {
 	id = gameData.displayed_hero
 	var hero = gameData.owned_heros[id]
+	document.getElementById("trainStat").disabled = true
 	if (stat == 'hp') {
 		document.getElementById("selectedStat").innerHTML = "Hitpoints"
 		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
 		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.basehp*hero.level) + " Hitpoints"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('hp')")
+
+		//enable button if conditions are met
+		if (gameData.gold >= 100 && hero.hpupgradelevel < hero.level*5) {
+			document.getElementById("trainStat").disabled = false
+		}
 	}
 	if (stat == 'atk') {
 		document.getElementById("selectedStat").innerHTML = "Attack"
 		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
 		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.baseatk*hero.level) + " Attack"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('atk')")
+
+		//enable button if conditions are met
+		if (gameData.gold >= 100 && hero.atkupgradelevel < hero.level*5) {
+			document.getElementById("trainStat").disabled = false
+		}
 	}
 	if (stat == 'def') {
 		document.getElementById("selectedStat").innerHTML = "Defence"
 		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
 		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.basedef*hero.level) + " Defence"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('def')")
+
+		//enable button if conditions are met
+		if (gameData.gold >= 100 && hero.defupgradelevel < hero.level*5) {
+			document.getElementById("trainStat").disabled = false
+		}
 	}
 	if (stat == 'res') {
 		document.getElementById("selectedStat").innerHTML = "Resistance"
 		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
 		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.baseres*hero.level) + " Resistance"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('res')")
+
+		//enable button if conditions are met
+		if (gameData.gold >= 100 && hero.resupgradelevel < hero.level*5) {
+			document.getElementById("trainStat").disabled = false
+		}
 	}
 
 	document.getElementById("heroTrain").style.display = "inline-block"
-
-	if (gameData.gold >= 100) {
-		document.getElementById("trainStat").disabled = false
-	}
 }
 
 function trainHero(stat) {
 	id = gameData.displayed_hero
+	hero = gameData.owned_heros[id]
+
 	if (gameData.gold >= 100) {
-		gameData.gold -= 100
-		document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
 		if (stat == 'hp') {
-			gameData.owned_heros[id].hpupgradelevel += 1
-			updateHealth()
+			if (hero.hpupgradelevel < hero.level*5) {
+				hero.hpupgradelevel += 1
+				gameData.gold -= 100
+				updateHealth()
+			}
 		}
 		if (stat == 'atk') {
-			gameData.owned_heros[id].atkupgradelevel += 1
+			if (hero.atkupgradelevel < hero.level*5) {
+				hero.atkupgradelevel += 1
+				gameData.gold -= 100
+			}
 		}
 		if (stat == 'def') {
-			gameData.owned_heros[id].defupgradelevel += 1
+			if (hero.defupgradelevel < hero.level*5) {
+				hero.defupgradelevel += 1
+				gameData.gold -= 100
+			}
 		}
 		if (stat == 'res') {
-			gameData.owned_heros[id].resupgradelevel += 1
+			if (hero.resupgradelevel < hero.level*5) {
+				hero.resupgradelevel += 1
+				gameData.gold -= 100
+			}
 		}
 	}
+
+	updateGold()
 
 	hero = gameData.owned_heros[id]
 	updateHeroStats(hero)
 
-	if (gameData.gold < 100) {
-		document.getElementById("trainStat").disabled = true
-	}
+	//update train button
+	trainHeroDisplay(stat)
 }
 
 function genCalendar() {
@@ -350,7 +387,7 @@ function battleDefeat() {
 	}
 	document.getElementById("goldReward").innerHTML = "Gold Obtained: " + (gameData.enemysDefeated*10)
 	gameData.gold += gameData.enemysDefeated*10
-	document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
+	updateGold()
 	
 	if (gameData.enemysDefeated > gameData.bestEnemysDefeated) {
 		enemyDefeatProgress = gameData.enemysDefeated - gameData.bestEnemysDefeated
@@ -453,7 +490,7 @@ function grabDaily() {
 		dailyGold = 10 + (10*gameData.bestEnemysDefeated)
 		gameData.gold += dailyGold
 		document.getElementById("dailyRewardText").innerHTML = "Recieved " + dailyGold + " Gold"
-		document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
+		updateGold()
 	}
 }
 
@@ -467,7 +504,7 @@ function incrementDay() {
 	//update currencies
 	document.getElementById("currentDay").innerHTML = "Day " + gameData.day
 	updateGems()
-	document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
+	updateGold()
 
 	//enable login reward
 	gameData.loginObtained = false
@@ -498,6 +535,11 @@ function updateGems() {
 			document.getElementById("pullOnBanner2").disabled = true
 		}
 	}
+}
+
+function updateGold() {
+	document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
+	document.getElementById("heroTrain").style.display = "none"
 }
 
 function generateRandomNumber(min, max) {
@@ -582,7 +624,7 @@ function summon0star() {
 	if (rng == 1) {
 		bannerGold = 100 + (100*gameData.bestEnemysDefeated)
 		gameData.gold += bannerGold
-		document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
+		updateGold()
 		document.getElementById("bannerReward").innerHTML = "Recieved " + bannerGold + " Gold"
 	} else {
 		gameData.dungeonTickets += 10
@@ -651,7 +693,7 @@ function hard_reset() {
 	//update currencies
 	document.getElementById("currentDay").innerHTML = "Day " + gameData.day
 	updateGems()
-	document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
+	updateGold()
 	document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
 
 	updateCollection()
@@ -678,7 +720,7 @@ if (savegame !== null) {
 	//update currencies
 	document.getElementById("currentDay").innerHTML = "Day " + gameData.day
 	updateGems()
-	document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
+	updateGold()
 	document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
 
 	updateCollection()
