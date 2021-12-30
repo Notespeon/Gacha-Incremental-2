@@ -32,6 +32,7 @@
 			<button onclick="incrementDay()">Go Next</button>
 			<p></p>
 			<button id="dailyRewardButton" onclick="grabDaily()" disabled>Collect Login Reward</button>
+			<button id="autoClaimButton" onclick="autoClaimDaily()" disabled>Auto</button>
 			<p id="dailyRewardText"></p>
 			<div id="dailyCalendarDiv"></div>
 		</div>
@@ -39,6 +40,7 @@
 			<div class="aligned">
 				<p></p>
 				<button id="enterDungeonButton" onclick="enterDungeon()">Use Ticket</button>
+				<button id="autoDungeonButton" onclick="autoDungeon()" disabled>Auto</button>
 				<p></p>
 				<p id="ticketCount">You have 0 Dungeon Tickets</p>
 				<p></p>
@@ -122,7 +124,7 @@
 				<button class="banner bannerButton nextButton" id="nextBanner2" onClick="changeBanner(2)" disabled>Next Banner</button>
 			</div>
 			<div id="improvementBanner">
-				<p class="banner" id="bannerText">Improvement Banner (Rewards saved but not implemented)</p>
+				<p class="banner" id="bannerText">Improvement Banner</p>
 				<img src="scuffed_assets/SlateBackground.png" class="background" alt="Black Background">
 				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerleft bannertop" alt="AUTO Dungeon">
 				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerright bannertop" alt="AUTO Dungeon">
@@ -151,8 +153,9 @@
 					<table>
 						<tr>
 							<th class="header">Name</th>
-							<th class="header">Star Rank</th>
+							<th class="header">Stars</th>
 							<th class="header">Element</th>
+							<th class="header">Rank</th>
 							<th class="header">Level</th>
 							<th class="header">Experience</th>
 							<th class="header">Hitpoints</th>
@@ -165,6 +168,7 @@
 							<th id="display_name"></th>
 							<th id="display_stars"></th>
 							<th id="display_element"></th>
+							<th id="display_rank"></th>
 							<th id="display_lvl"></th>
 							<th id="display_xp"></th>
 							<th id="display_hp"></th>
@@ -180,12 +184,22 @@
 					<button id="trainattack" onclick="trainHeroDisplay('atk')">Train Attack</button>
 					<button id="traindefence" onclick="trainHeroDisplay('def')">Train Defence</button>
 					<button id="trainresistance" onclick="trainHeroDisplay('res')">Train Resistance</button>
+					<button id="rankupButton" onclick="rankUpDisplay()">Rank Up</button>
+					<button id="giveexp" onclick="giveHeroExp()" disabled>Give EXP</button>
 				</div>
 				<div id="heroTrain">
 					<p class="header" id="selectedStat">Hitpoints</p>
 					<p id="statCost">Cost: 10 Gold</p>
 					<p id="statChange">Increase: +10 Hitpoints</p>
 					<button id="trainStat" onclick="trainHero('hp')" disabled>Train</button>
+					<button id="fasttrainStat" onclick="fastTrainHero('hp')" disabled>Train x10</button>
+				</div>
+				<div id="rankUp">
+					<p class="header" id="rankUpHeader">Rank Up</p>
+					<p id="rankUpLevelRequired">Level 1/10</p>
+					<p id="dupeCost">0/1 Duplicates</p>
+					<p id="unlimitCost">0/1 UN-LIMITERS</p>
+					<button id="rankUpConfirm" onclick="rankUpHero()" disabled>Rank Up!</button>
 				</div>
 			</div>
 		</div>

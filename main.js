@@ -19,8 +19,11 @@ var gameData = {
 	enemysDefeated: 0,
 	bestEnemysDefeated: 0,
 	dungeonOpen: false,
-	pullCounts: [0, 0],
-	loginObtained: false
+	pullCounts: [0, 0, 0],
+	loginObtained: false,
+	autoDungeon: false,
+	autoDungeonDelay: 0,
+	autoClaim: false
 }
 
 class Hero {
@@ -28,6 +31,7 @@ class Hero {
 		this.id = id;
 		this.name = name;
 		this.stars = stars;
+		this.rank = 0;
 		this.element = element;
 		this.level = 1;
 		this.experience = 0;
@@ -70,10 +74,12 @@ var hero_pool = [
 ];
 
 function updateHeroStats(hero) {
-	hero.hp = hero.basehp * hero.level * hero.hpupgradelevel
-	hero.attack = hero.baseatk * hero.level * hero.atkupgradelevel
-	hero.defence = hero.basedef * hero.level * hero.defupgradelevel
-	hero.resistance = hero.baseres * hero.level * hero.resupgradelevel
+	var bonusMulti = hero.level * (2**hero.rank) * Math.max(1, hero.level - 9) * Math.max(1, hero.level - 19)
+
+	hero.hp = hero.basehp * hero.hpupgradelevel * bonusMulti
+	hero.attack = hero.baseatk * hero.atkupgradelevel * bonusMulti
+	hero.defence = hero.basedef * hero.defupgradelevel * bonusMulti
+	hero.resistance = hero.baseres * hero.resupgradelevel * bonusMulti
 
 	//update hero stats in collection
 	if (gameData.displayed_hero != null) {
@@ -83,19 +89,24 @@ function updateHeroStats(hero) {
 
 function checkLevelUp(hero, slot) {
 	var levellingUp = false
-	if (hero.experience >= 10*(2**(hero.level-1)) && hero.level < 10) {
+	if (hero.experience >= 10*(2**(hero.level-1)) && hero.level < (10 * (2**hero.rank))) {
 		levellingUp = true
 	}
 
-	while (hero.experience >= 10*(2**(hero.level-1)) && hero.level < 10) {
+	while (hero.experience >= 10*(2**(hero.level-1)) && hero.level < (10 * (2**hero.rank))) {
 		hero.level += 1
 	}
 
-	if (levellingUp) {
-		document.getElementById("levelUpReward"+(slot+1)).innerHTML = hero.name + " Levelled Up! Level: " + hero.level
+	if (slot == 3) {
+
 	} else {
-		document.getElementById("levelUpReward"+(slot+1)).innerHTML = ""
+		if (levellingUp) {
+			document.getElementById("levelUpReward"+(slot+1)).innerHTML = hero.name + " Levelled Up! Level: " + hero.level
+		} else {
+			document.getElementById("levelUpReward"+(slot+1)).innerHTML = ""
+		}
 	}
+
 	updateHeroStats(hero)
 }
 
@@ -105,6 +116,7 @@ function showHeroStats(id) {
 	//display hero stats
 	document.getElementById("display_name").innerHTML = hero.name
 	document.getElementById("display_stars").innerHTML = hero.stars
+	document.getElementById("display_rank").innerHTML = hero.rank
 	document.getElementById("display_element").innerHTML = hero.element
 	document.getElementById("display_lvl").innerHTML = hero.level
 	document.getElementById("display_xp").innerHTML = hero.experience
@@ -116,6 +128,7 @@ function showHeroStats(id) {
 
 	document.getElementById("charStats").style.display = "inline-block"
 	document.getElementById("heroTrain").style.display = "none"
+	document.getElementById("rankUp").style.display = "none"
 }
 
 function selectHero() {
@@ -170,56 +183,141 @@ function updateDungeon() {
 	}
 }
 
+function rankUpHero() {
+	id = gameData.displayed_hero
+	var hero = gameData.owned_heros[id]
+	rank = hero.rank
+
+	if ((hero.level >= (10+(rank*10))) && (gameData.duplicate_heros[id] >= (10**rank)) && (gameData.unLimiter >= (10**rank))) {
+		document.getElementById("rankUpConfirm").disabled = true
+		hero.rank += 1
+		hero.level = 1
+		hero.experience = 0
+		gameData.unLimiter -= 10**rank
+
+	}
+	updateHeroStats(hero)
+	rankUpDisplay()
+}
+
+function rankUpDisplay() {
+	id = gameData.displayed_hero
+	var hero = gameData.owned_heros[id]
+	rank = hero.rank
+
+	document.getElementById("rankUp").style.display = "inline-block"
+	document.getElementById("heroTrain").style.display = "none"
+	
+	document.getElementById("rankUpLevelRequired").innerHTML = "Level " + hero.level + "/" + (10+rank*10)
+	document.getElementById("dupeCost").innerHTML = gameData.duplicate_heros[id] + "/" + (10**rank) + " Duplicates"
+	document.getElementById("unlimitCost").innerHTML = gameData.unLimiter + "/" + (10**rank) + " UN-LIMITERS"
+
+	if ((hero.level >= (10+(rank*10))) && (gameData.duplicate_heros[id] >= (10**rank)) && (gameData.unLimiter >= (10**rank))) {
+		document.getElementById("rankUpConfirm").disabled = false
+	}
+}
+
 function trainHeroDisplay(stat) {
 	id = gameData.displayed_hero
 	var hero = gameData.owned_heros[id]
 	document.getElementById("trainStat").disabled = true
+	document.getElementById("fasttrainStat").disabled = true
+	document.getElementById("rankUp").style.display = "none"
 	if (stat == 'hp') {
 		document.getElementById("selectedStat").innerHTML = "Hitpoints"
 		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
-		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.basehp*hero.level) + " Hitpoints"
+		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.basehp * hero.level * (2**hero.rank)) + " Hitpoints"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('hp')")
+		document.getElementById("fasttrainStat").setAttribute('onclick', "fastTrainHero('hp')")
 
 		//enable button if conditions are met
-		if (gameData.gold >= 100 && hero.hpupgradelevel < hero.level*5) {
+		if (gameData.gold >= 100 && hero.hpupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
+			if (gameData.fastTrainer > 0) {
+				document.getElementById("fasttrainStat").disabled = false
+			}
 		}
 	}
 	if (stat == 'atk') {
 		document.getElementById("selectedStat").innerHTML = "Attack"
 		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
-		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.baseatk*hero.level) + " Attack"
+		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.baseatk * hero.level * (2**hero.rank)) + " Attack"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('atk')")
+		document.getElementById("fasttrainStat").setAttribute('onclick', "fastTrainHero('atk')")
 
 		//enable button if conditions are met
-		if (gameData.gold >= 100 && hero.atkupgradelevel < hero.level*5) {
+		if (gameData.gold >= 100 && hero.atkupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
+			if (gameData.fastTrainer > 0) {
+				document.getElementById("fasttrainStat").disabled = false
+			}
 		}
 	}
 	if (stat == 'def') {
 		document.getElementById("selectedStat").innerHTML = "Defence"
 		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
-		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.basedef*hero.level) + " Defence"
+		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.basedef * hero.level * (2**hero.rank)) + " Defence"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('def')")
+		document.getElementById("fasttrainStat").setAttribute('onclick', "fastTrainHero('def')")
 
 		//enable button if conditions are met
-		if (gameData.gold >= 100 && hero.defupgradelevel < hero.level*5) {
+		if (gameData.gold >= 100 && hero.defupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
+			if (gameData.fastTrainer > 0) {
+				document.getElementById("fasttrainStat").disabled = false
+			}
 		}
 	}
 	if (stat == 'res') {
 		document.getElementById("selectedStat").innerHTML = "Resistance"
 		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
-		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.baseres*hero.level) + " Resistance"
+		document.getElementById("statChange").innerHTML = "Increase: +" + (hero.baseres * hero.level * (2**hero.rank)) + " Resistance"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('res')")
+		document.getElementById("fasttrainStat").setAttribute('onclick', "fastTrainHero('res')")
 
 		//enable button if conditions are met
-		if (gameData.gold >= 100 && hero.resupgradelevel < hero.level*5) {
+		if (gameData.gold >= 100 && hero.resupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
+			if (gameData.fastTrainer > 0) {
+				document.getElementById("fasttrainStat").disabled = false
+			}
 		}
 	}
 
 	document.getElementById("heroTrain").style.display = "inline-block"
+}
+
+function bottleGains(level) {
+	if (level == 1) {
+		return 1
+	} else {
+		downScaling = 2**(Math.floor((level)/10))
+		return 0.5*(2**(level-1))/downScaling
+	}
+}
+
+function giveHeroExp() {
+	id = gameData.displayed_hero
+	hero = gameData.owned_heros[id]
+
+	if (gameData.bottledExp > 0) {
+		gameData.bottledExp -= 1
+		hero.experience += bottleGains(hero.level)
+
+		checkLevelUp(hero, 3)
+	}
+
+	if (gameData.bottledExp <= 0) {
+		document.getElementById("giveexp").disabled = true
+	}
+}
+
+function fastTrainHero(stat) {
+	gameData.fastTrainer -= 1
+
+	for (var i = 0; i < 10; i++) {
+		trainHero(stat)
+	}
 }
 
 function trainHero(stat) {
@@ -228,26 +326,26 @@ function trainHero(stat) {
 
 	if (gameData.gold >= 100) {
 		if (stat == 'hp') {
-			if (hero.hpupgradelevel < hero.level*5) {
+			if (hero.hpupgradelevel < (hero.level*5 * (2**hero.rank))) {
 				hero.hpupgradelevel += 1
 				gameData.gold -= 100
 				updateHealth()
 			}
 		}
 		if (stat == 'atk') {
-			if (hero.atkupgradelevel < hero.level*5) {
+			if (hero.atkupgradelevel < (hero.level*5 * (2**hero.rank))) {
 				hero.atkupgradelevel += 1
 				gameData.gold -= 100
 			}
 		}
 		if (stat == 'def') {
-			if (hero.defupgradelevel < hero.level*5) {
+			if (hero.defupgradelevel < (hero.level*5 * (2**hero.rank))) {
 				hero.defupgradelevel += 1
 				gameData.gold -= 100
 			}
 		}
 		if (stat == 'res') {
-			if (hero.resupgradelevel < hero.level*5) {
+			if (hero.resupgradelevel < (hero.level*5 * (2**hero.rank))) {
 				hero.resupgradelevel += 1
 				gameData.gold -= 100
 			}
@@ -255,8 +353,6 @@ function trainHero(stat) {
 	}
 
 	updateGold()
-
-	hero = gameData.owned_heros[id]
 	updateHeroStats(hero)
 
 	//update train button
@@ -389,6 +485,7 @@ function gainGold(kills) {
 }
 
 function battleDefeat() {
+	gameData.autoDungeonDelay = 3
 	if (gameData.squad_heros.length > 0) {
 		gameData.squad_hp = 0
 		for (var i = 0; i < gameData.squad_heros.length; i++) {
@@ -413,10 +510,10 @@ function battleDefeat() {
 			}
 		}
 
-		//reward for clearing levle 10
+		//reward for clearing level 10
 		if (gameData.bestEnemysDefeated < 10) {
 			if (gameData.enemysDefeated >= 10) {
-				document.getElementById("specialReward").innerHTML = "Level 10 Bonus: END OF CONTENT REACHED IN " + gameData.day + " Days!"
+				document.getElementById("specialReward").innerHTML = "Level 10 Bonus: PRESTIGE UNLOCKED!"
 			}
 		}
 
@@ -480,13 +577,6 @@ function battleAttack() {
 	}
 }
 
-//battle loop
-var battleLoop = window.setInterval(function() {
-	if (gameData.dungeonOpen) {
-		battleAttack()
-	}
-}, 1000)
-
 function enterDungeon() {
 	if (gameData.dungeonTickets > 0) {
 		if (gameData.squad_heros.length > 0) {
@@ -509,6 +599,63 @@ function enterDungeon() {
 		else {
 			document.getElementById("dungeonWarningMessage").innerHTML = "You need a hero assigned to enter the dungeon."
 		}
+	}
+}
+
+//battle loop
+var battleLoop = window.setInterval(function() {
+	if (gameData.dungeonOpen) {
+		battleAttack()
+	}
+}, 1000)
+
+//autoclaim loop
+var autoClaimLoop = window.setInterval(function() {
+	if (gameData.autoDailyClaim > 0 && !gameData.loginObtained) {
+		gameData.autoDailyClaim -= 1
+		grabDaily()
+	}
+	if (gameData.autoClaim && gameData.autoDailyClaim <= 0) {
+		document.getElementById("autoClaimButton").className = "unpressed"
+		document.getElementById("autoClaimButton").disabled = true
+		gameData.autoClaim = false
+	}
+}, 500)
+
+//autodungeon loop
+var autoDungeonLoop = window.setInterval(function() {
+	if (!gameData.dungeonOpen && gameData.autoDungeon && gameData.autoDungeonTickets > 0) {
+		if (gameData.autoDungeonDelay > 0) {
+			gameData.autoDungeonDelay -= 1
+		} else {
+			gameData.autoDungeonTickets -= 1
+			enterDungeon()
+		}
+	}
+	if (gameData.autoDungeon && gameData.autoDungeonTickets <= 0) {
+		document.getElementById("autoDungeonButton").className = "unpressed"
+		document.getElementById("autoDungeonButton").disabled = true
+		gameData.autoDungeon = false
+	}
+}, 1000)
+
+function autoClaimDaily() {
+	if (!gameData.autoClaim) {
+		document.getElementById("autoClaimButton").className = "pressed"
+		gameData.autoClaim = true
+	} else {
+		document.getElementById("autoClaimButton").className = "unpressed"
+		gameData.autoClaim = false
+	}
+}
+
+function autoDungeon() {
+	if (!gameData.autoDungeon) {
+		document.getElementById("autoDungeonButton").className = "pressed"
+		gameData.autoDungeon = true
+	} else {
+		document.getElementById("autoDungeonButton").className = "unpressed"
+		gameData.autoDungeon = false
 	}
 }
 
@@ -613,29 +760,12 @@ function updateGems() {
 
 	//update gem count
 	document.getElementById("gemsOwned").innerHTML = gameData.gems + " Gems"
-
-	/*if (gameData.pullCounts[0] == 0) {
-		document.getElementById("standardBanner").style.display = "none"
-		document.getElementById("newbieBanner").style.display = "inline-block"
-		if (gameData.gems >= 1) {
-			document.getElementById("pullOnBanner1").disabled = false
-		} else {
-			document.getElementById("pullOnBanner1").disabled = true
-		}
-	} else {
-		document.getElementById("newbieBanner").style.display = "none"
-		document.getElementById("standardBanner").style.display = "inline-block"
-		if (gameData.gems >= 10) {
-			document.getElementById("pullOnBanner2").disabled = false
-		} else {
-			document.getElementById("pullOnBanner2").disabled = true
-		}
-	}*/
 }
 
 function updateGold() {
 	document.getElementById("goldOwned").innerHTML = gameData.gold + " Gold"
 	document.getElementById("heroTrain").style.display = "none"
+	document.getElementById("rankUp").style.display = "none"
 }
 
 function generateRandomNumber(min, max) {
@@ -771,22 +901,31 @@ function pullBanner(id) {
 			if (results_reward == 0) {
 				gameData.autoDungeonTickets += 10
 				document.getElementById("bannerReward").innerHTML = "Recieved 10 Auto Dungeon Tickets"
+				document.getElementById("autoDungeonButton").disabled = false
 			} else if (results_reward == 1) {
 				gameData.autoDailyClaim += 10
-				document.getElementById("bannerReward").innerHTML = "Recieved 10 Auto Login-Claims"
+				document.getElementById("bannerReward").innerHTML = "Recieved 10 Auto Claim Tickets"
+				document.getElementById("autoClaimButton").disabled = false
 			} else if (results_reward == 2) {
 				gameData.fastTrainer += 10
-				document.getElementById("bannerReward").innerHTML = "Recieved 10 Dungeon Tickets"
+				document.getElementById("bannerReward").innerHTML = "Recieved 10 Fast Trainers"
 			} else if (results_reward == 3) {
 				gameData.bottledExp += 5
 				document.getElementById("bannerReward").innerHTML = "Recieved 5 Bottled Experience"
+				document.getElementById("giveexp").disabled = false
 			} else if (results_reward == 4) {
 				gameData.unLimiter += 1
 				document.getElementById("bannerReward").innerHTML = "Recieved 1 UN-LIMITER"
 			} else if (results_reward == 5) {
-				gameData.adailyLevel += 1
+				gameData.dailyLevel += 1
 				document.getElementById("bannerReward").innerHTML = "Recieved 1 Daily Improvement, Increasing your Daily Level!"
 			}
+
+			//display these buttons after first pull on new banner
+			document.getElementById("autoClaimButton").style.display = "inline-block"
+			document.getElementById("autoDungeonButton").style.display = "inline-block"
+			document.getElementById("fasttrainStat").style.display = "inline-block"
+			document.getElementById("giveexp").style.display = "inline-block"
 		}
 	}
 }
@@ -814,8 +953,11 @@ function hard_reset() {
 		enemysDefeated: 0,
 		bestEnemysDefeated: 0,
 		dungeonOpen: false,
-		pullCounts: [0, 0],
-		loginObtained: false
+		pullCounts: [0, 0, 0],
+		loginObtained: false,
+		autoDungeon: false,
+		autoDungeonDelay: 0,
+		autoClaim: false
 	}
 	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
 
@@ -830,9 +972,14 @@ function hard_reset() {
 	document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
 
 	//tidy up menus
-	document.getElementById("bannerReward").innerHTML = ""
+	document.getElementById("autoDungeonButton").style.display = "none"
+	document.getElementById("autoClaimButton").style.display = "none"
+	document.getElementById("fasttrainStat").style.display = "none"
+	document.getElementById("giveexp").style.display = "none"
 	updateCollection()
 
+	//tidy up gacha
+	document.getElementById("bannerReward").innerHTML = ""
 	document.getElementById("nextBanner1").disabled = true
 	document.getElementById("prevBanner2").disabled = true
 	document.getElementById("nextBanner2").disabled = false
@@ -848,6 +995,91 @@ function hard_reset() {
 
 }
 
+//stops new versions from breaking old saves
+function checkSaveFile() {
+	if (typeof gameData.gold === 'undefined') {
+		gameData.gold = 100
+	}
+	if (typeof gameData.gems === 'undefined') {
+		gameData.gems = 0
+	}
+	if (typeof gameData.day === 'undefined') {
+		gameData.day = 1
+	}
+	if (typeof gameData.dungeonTickets === 'undefined') {
+		gameData.dungeonTickets = 0
+	}
+	if (typeof gameData.autoDungeonTickets === 'undefined') {
+		gameData.autoDungeonTickets = 0
+	}
+	if (typeof gameData.autoDailyClaim === 'undefined') {
+		gameData.autoDailyClaim = 0
+	}
+	if (typeof gameData.unLimiter === 'undefined') {
+		gameData.unLimiter = 0
+	}
+	if (typeof gameData.dailyLevel === 'undefined') {
+		gameData.dailyLevel = 1
+	}
+	if (typeof gameData.fastTrainer === 'undefined') {
+		gameData.fastTrainer = 0
+	}
+	if (typeof gameData.bottledExp === 'undefined') {
+		gameData.bottledExp = 0
+	}
+	if (typeof gameData.owned_heros === 'undefined') {
+		gameData.owned_heros = []
+	} else {
+		for (var i = 0; i < gameData.owned_heros.length; i++) {
+			if (typeof gameData.owned_heros[i].rank === 'undefined') {
+				gameData.owned_heros[i].rank = 0
+			}
+		}
+	}
+	if (typeof gameData.duplicate_heros === 'undefined') {
+		gameData.duplicate_heros = []
+	}
+	if (typeof gameData.unique_hero_count === 'undefined') {
+		gameData.unique_hero_count = 0
+	}
+	if (typeof gameData.displayed_hero === 'undefined') {
+		gameData.displayed_hero = null
+	}
+	if (typeof gameData.squad_heros === 'undefined') {
+		gameData.squad_heros = []
+	}
+	if (typeof gameData.squad_hp === 'undefined') {
+		gameData.squad_hp = 0
+	}
+	if (typeof gameData.enemy === 'undefined') {
+		gameData.enemy = null
+	}
+	if (typeof gameData.enemysDefeated === 'undefined') {
+		gameData.enemysDefeated = 0
+	}
+	if (typeof gameData.bestEnemysDefeated === 'undefined') {
+		gameData.bestEnemysDefeated = 0
+	}
+	if (typeof gameData.dungeonOpen === 'undefined') {
+		gameData.dungeonOpen = false
+	}
+	if (typeof gameData.pullCounts === 'undefined') {
+		gameData.pullCounts = [0, 0, 0]
+	}
+	if (typeof gameData.loginObtained === 'undefined') {
+		gameData.loginObtained = false
+	}
+	if (typeof gameData.autoDungeon === 'undefined') {
+		gameData.autoDungeon = false
+	}
+	if (typeof gameData.autoDungeonDelay === 'undefined') {
+		gameData.autoDungeonDelay = 0
+	}
+	if (typeof gameData.autoClaim === 'undefined') {
+		gameData.autoClaim = false
+	}
+}
+
 //save data stuff
 var saveGameLoop = window.setInterval(function() {
 	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
@@ -859,6 +1091,9 @@ var savegame = JSON.parse(localStorage.getItem('gachaIncrementalSave'))
 console.log(savegame)
 if (savegame !== null) {
 	gameData = savegame
+
+	//check every variable in gameData for definition and initialize if missing
+	checkSaveFile()
 
 	//update currencies
 	document.getElementById("currentDay").innerHTML = "Day " + gameData.day
@@ -873,6 +1108,50 @@ if (savegame !== null) {
 		document.getElementById("dailyRewardButton").disabled = false
 	}
 
+	//enable auto dungeon if available
+	if (gameData.autoDungeonTickets > 0) {
+		document.getElementById("autoDungeonButton").disabled = false
+	}
+
+	//enable auto claim if available
+	if (gameData.autoDailyClaim > 0) {
+		document.getElementById("autoClaimButton").disabled = false
+	}
+
+	//enable give exp if available
+	if (gameData.bottledExp > 0) {
+		document.getElementById("giveexp").disabled = false
+	}
+
+	//display new features after pulling from banner 3 for the first time
+	if (gameData.pullCounts[2] > 0) {
+		document.getElementById("autoClaimButton").style.display = "inline-block"
+		document.getElementById("autoDungeonButton").style.display = "inline-block"
+		document.getElementById("fasttrainStat").style.display = "inline-block"
+		document.getElementById("giveexp").style.display = "inline-block"
+	} else {
+		document.getElementById("autoClaimButton").style.display = "none"
+		document.getElementById("autoDungeonButton").style.display = "none"
+		document.getElementById("fasttrainStat").style.display = "none"
+		document.getElementById("giveexp").style.display = "none"
+	}
+
+	if (gameData.autoDungeon) {
+		if (gameData.autoDungeonTickets > 0) {
+			document.getElementById("autoDungeonButton").className = "pressed"
+		} else {
+			gameData.autoDungeon = false
+		}
+	}
+
+	if (gameData.autoClaim) {
+		if (gameData.autoDailyClaim > 0) {
+			document.getElementById("autoClaimButton").className = "pressed"
+		} else {
+			gameData.autoClaim = false
+		}
+	}
+
 	//update dungeon status
 	if (!gameData.dungeonOpen) {
 		document.getElementById("theDungeon").style.display = "none"
@@ -883,12 +1162,17 @@ if (savegame !== null) {
 	document.getElementById("enemyStats").style.display = "none"
 	document.getElementById("enterDungeonButton").disabled = true
 	document.getElementById("standardBanner").style.display = "none"
+	document.getElementById("autoDungeonButton").style.display = "none"
+	document.getElementById("autoClaimButton").style.display = "none"
+	document.getElementById("fasttrainStat").style.display = "none"
+	document.getElementById("giveexp").style.display = "none"
 }
 
 /* MAIN? */
 tab("colDailyMenu")
 genCalendar()
 document.getElementById("heroTrain").style.display = "none"
+document.getElementById("rankUp").style.display = "none"
 document.getElementById("charStats").style.display = "none"
 
 document.getElementById("newbieBanner").style.display = "inline-block"

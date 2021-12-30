@@ -383,3 +383,7 @@ progress:after {
   color: yellow;
   font-size: 32px;
 }
+
+.pressed {
+  background-color: #4CAF50;
+}
