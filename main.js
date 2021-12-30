@@ -563,6 +563,9 @@ function battleDefeat() {
 		updateSuperGems()
 	}
 
+	//re-enable reward text
+	document.getElementById("dungeonReward").style.display = "inline-block"
+
 	//close the dungeon
 	gameData.enemysDefeated = 0
 	gameData.dungeonOpen = false
