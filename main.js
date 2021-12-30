@@ -771,10 +771,6 @@ function superGemDayMultiCalc(day) {
 	}
 }
 
-for (var i = 0; i < 500; i++) {
-	console.log(superGemDayMultiCalc(i))
-}
-
 function futureHeroSuperGemsCalc() {
 	futureHeroSuperGems = 0
 	for (var i = 0; i < gameData.owned_heros.length; i++) {
