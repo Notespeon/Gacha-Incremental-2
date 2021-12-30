@@ -763,12 +763,16 @@ function superGemDayMultiCalc(day) {
 	if (day < 10) {
 		return 10 - Math.floor((1+day)/2)
 	} else if (day < 100) {
-		return 5 - Math.floor((1+(day-10)/30))
+		return 5 - Math.floor((day-10)/30)
 	} else if (day < 365) {
 		return 2
 	} else {
 		return 1
 	}
+}
+
+for (var i = 0; i < 500; i++) {
+	console.log(superGemDayMultiCalc(i))
 }
 
 function futureHeroSuperGemsCalc() {
