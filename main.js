@@ -1,6 +1,8 @@
 var gameData = {
 	gold: 100,
 	gems: 0,
+	superGems: 0,
+	bestSuperGems: 0,
 	day: 1,
 	dungeonTickets: 0,
 	autoDungeonTickets: 0, 
@@ -23,7 +25,8 @@ var gameData = {
 	loginObtained: false,
 	autoDungeon: false,
 	autoDungeonDelay: 0,
-	autoClaim: false
+	autoClaim: false,
+	prestigeCount: 0
 }
 
 class Hero {
@@ -98,7 +101,9 @@ function checkLevelUp(hero, slot) {
 	}
 
 	if (slot == 3) {
-
+		if (gameData.bestEnemysDefeated >= 10 || gameData.prestigeCount > 0) {
+			updateSuperGems()
+		}
 	} else {
 		if (levellingUp) {
 			document.getElementById("levelUpReward"+(slot+1)).innerHTML = hero.name + " Levelled Up! Level: " + hero.level
@@ -288,11 +293,13 @@ function trainHeroDisplay(stat) {
 }
 
 function bottleGains(level) {
+	prestigeMulti = (1 + gameData.bestSuperGems)
+
 	if (level == 1) {
 		return 1
 	} else {
 		downScaling = 2**(Math.floor((level)/10))
-		return 0.5*(2**(level-1))/downScaling
+		return 0.5*prestigeMulti*(2**(level-1))/downScaling
 	}
 }
 
@@ -396,12 +403,14 @@ function tab(tab) {
 	document.getElementById("charCollection").style.display = "none"
 	document.getElementById("theDungeonMenu").style.display = "none"
 	document.getElementById("settingsMenu").style.display = "none"
+	document.getElementById("prestigeMenu").style.display = "none"
 
 	document.getElementById("bannermenu").className = "inactive"
 	document.getElementById("dailymenu").className = "inactive"
 	document.getElementById("collect").className = "inactive"
-	document.getElementById("settings").className = "inactive"
 	document.getElementById("dungeonmenu").className = "inactive"
+	document.getElementById("settings").className = "inactive"
+	document.getElementById("prestige").className = "inactive"
 
 	document.getElementById(tab).style.display = "inline-block"
 
@@ -415,6 +424,8 @@ function tab(tab) {
 		document.getElementById("dungeonmenu").className = "active"
 	} else if (tab == "settingsMenu") {
 		document.getElementById("settings").className = "active"
+	} else if (tab == "prestigeMenu") {
+		document.getElementById("prestige").className = "active"
 	}
 }
 
@@ -472,7 +483,12 @@ function gainExperience(kills) {
 	for (var i = 0; i < kills; i++) {
 		xpGained += (i + 1)
 	}
+	prestigeMulti = (1 + gameData.bestSuperGems)
+
+	xpGained = xpGained * prestigeMulti
+
 	document.getElementById("xpReward").innerHTML = "Experience Obtained: " + xpGained
+
 	return xpGained
 }
 
@@ -481,7 +497,10 @@ function gainGold(kills) {
 	for (var i = 0; i < kills; i++) {
 		goldGained += (i + 1)
 	}
-	return goldGained*5
+
+	prestigeMulti = (1 + gameData.bestSuperGems)
+
+	return goldGained * 5 * prestigeMulti
 }
 
 function battleDefeat() {
@@ -501,6 +520,7 @@ function battleDefeat() {
 	updateGold()
 
 	document.getElementById("specialReward").innerHTML = ""
+	document.getElementById("extraReward").innerHTML = ""
 	
 	if (gameData.enemysDefeated > gameData.bestEnemysDefeated) {
 		//reward for clearing level 5
@@ -514,6 +534,9 @@ function battleDefeat() {
 		if (gameData.bestEnemysDefeated < 10) {
 			if (gameData.enemysDefeated >= 10) {
 				document.getElementById("specialReward").innerHTML = "Level 10 Bonus: PRESTIGE UNLOCKED!"
+				document.getElementById("extraReward").innerHTML = "To celebrate, here's some rank up materials for your first hero!"
+				gameData.unLimiter += 1
+				gameData.duplicate_heros[0] += 1
 			}
 		}
 
@@ -530,6 +553,14 @@ function battleDefeat() {
 		updateGems()
 	} else {
 		document.getElementById("gemReward").innerHTML = ""
+	}
+
+	//unlock prestige
+	if (gameData.enemysDefeated >= 10 || gameData.prestigeCount > 0) {
+		document.getElementById("prestige").style.display = "inline-block"
+		document.getElementById("superGemsOwned").style.display = "inline-block"
+		document.getElementById("superGemPipe").style.display = "inline-block"
+		updateSuperGems()
 	}
 
 	//close the dungeon
@@ -607,23 +638,8 @@ var battleLoop = window.setInterval(function() {
 	if (gameData.dungeonOpen) {
 		battleAttack()
 	}
-}, 1000)
 
-//autoclaim loop
-var autoClaimLoop = window.setInterval(function() {
-	if (gameData.autoDailyClaim > 0 && !gameData.loginObtained) {
-		gameData.autoDailyClaim -= 1
-		grabDaily()
-	}
-	if (gameData.autoClaim && gameData.autoDailyClaim <= 0) {
-		document.getElementById("autoClaimButton").className = "unpressed"
-		document.getElementById("autoClaimButton").disabled = true
-		gameData.autoClaim = false
-	}
-}, 500)
-
-//autodungeon loop
-var autoDungeonLoop = window.setInterval(function() {
+	//autodungeonLoop
 	if (!gameData.dungeonOpen && gameData.autoDungeon && gameData.autoDungeonTickets > 0) {
 		if (gameData.autoDungeonDelay > 0) {
 			gameData.autoDungeonDelay -= 1
@@ -677,7 +693,8 @@ function grabDaily() {
 		document.getElementById("enterDungeonButton").disabled = false
 	}
 	else {
-		dailyGold = 10 + (10*gameData.bestEnemysDefeated)
+		prestigeMulti = (1 + gameData.bestSuperGems)
+		dailyGold = (10 + (10 * gameData.bestEnemysDefeated)) * prestigeMulti
 		gameData.gold += dailyGold
 		document.getElementById("dailyRewardText").innerHTML = "Recieved " + dailyGold + " Gold"
 		updateGold()
@@ -700,9 +717,24 @@ function incrementDay() {
 	gameData.loginObtained = false
 	document.getElementById("dailyRewardButton").disabled = false
 
+	//claim login reward automatically
+	if (gameData.autoDailyClaim > 0 && !gameData.loginObtained) {
+		gameData.autoDailyClaim -= 1
+		grabDaily()
+	}
+	if (gameData.autoClaim && gameData.autoDailyClaim <= 0) {
+		document.getElementById("autoClaimButton").className = "unpressed"
+		document.getElementById("autoClaimButton").disabled = true
+		gameData.autoClaim = false
+	}
+
 	//end dungeon session
 	if (gameData.dungeonOpen) {
 		battleDefeat()
+	}
+
+	if (gameData.bestEnemysDefeated >= 10 || gameData.prestigeCount > 0) {
+		updateSuperGems()
 	}
 }
 
@@ -722,6 +754,113 @@ function changeBanner(bannerId) {
 	if (bannerId == 2) {
 		document.getElementById("improvementBanner").style.display = "inline-block"
 	}
+}
+
+function superGemDayMultiCalc(day) {
+	if (day < 10) {
+		return 10 - Math.floor((1+day)/2)
+	} else if (day < 100) {
+		return 5 - Math.floor((1+(day-10)/30))
+	} else if (day < 365) {
+		return 2
+	} else {
+		return 1
+	}
+}
+
+function futureHeroSuperGemsCalc() {
+	futureHeroSuperGems = 0
+	for (var i = 0; i < gameData.owned_heros.length; i++) {
+		if (gameData.owned_heros[i].level > 10) {
+			futureHeroSuperGems += (gameData.owned_heros[i].level - 10)
+		}
+	}
+
+	return futureHeroSuperGems
+}
+
+//update super gem count
+function updateSuperGems() {
+
+	futureHeroSuperGems = futureHeroSuperGemsCalc()
+
+	if (gameData.bestEnemysDefeated > 10) {
+		futureDungeonSuperGems = gameData.bestEnemysDefeated - 10
+	} else {
+		futureDungeonSuperGems = 0
+	}
+
+	superGemDayMulti = superGemDayMultiCalc(gameData.day)
+
+	futureSuperGems = (futureHeroSuperGems + futureDungeonSuperGems) * superGemDayMulti
+
+	document.getElementById("superGemsOwned").innerHTML = gameData.superGems + " S-Gems"
+	document.getElementById("superGemCount").innerHTML = "You currently have " + gameData.superGems + " Super Gems"
+	document.getElementById("bestSuperGemCount").innerHTML = "Your best ever Super Gems is " + gameData.bestSuperGems + ": Multiplying Gold and EXP Gained by " + (1+gameData.bestSuperGems)
+	document.getElementById("futureSuperGemCount").innerHTML = "Recieve " + futureSuperGems + " Super Gems"
+	document.getElementById("futureHeroSuperGems").innerHTML = futureHeroSuperGems + " Super Gems for hero levels past 10"
+	document.getElementById("futureDungeonSuperGems").innerHTML = futureDungeonSuperGems + " Super Gems for dungeon levels cleared past 10"
+	document.getElementById("superGemDayMulti").innerHTML = superGemDayMulti + "x Multiplier for prestiging on day " + gameData.day
+
+	if (futureSuperGems > 0) {
+		document.getElementById("prestigeConfirm").disabled = false
+	}
+}
+
+//prestige
+function prestigeGame() {
+	//give super gems
+	futureHeroSuperGems = futureHeroSuperGemsCalc()
+
+	if (gameData.bestEnemysDefeated > 10) {
+		futureDungeonSuperGems = gameData.bestEnemysDefeated - 10
+	} else {
+		futureDungeonSuperGems = 0
+	}
+
+	superGemDayMulti = superGemDayMultiCalc(gameData.day)
+
+	futureSuperGems = (futureHeroSuperGems + futureDungeonSuperGems) * superGemDayMulti
+
+	gameData.superGems += futureSuperGems
+	
+	//update best super gems
+	if (gameData.superGems > gameData.bestSuperGems) {
+		gameData.bestSuperGems = gameData.superGems
+	}
+
+	gameData.prestigeCount += 1
+
+	//reset everything
+	gameData.gold = 100
+	gameData.gems = gameData.superGems //give regular gems
+	gameData.day = 1
+	gameData.dungeonTickets = 0
+	gameData.autoDungeonTickets = 0
+	gameData.autoDailyClaim = 0
+	gameData.unLimiter = 0
+	gameData.dailyLevel = 1
+	gameData.fastTrainer = 0
+	gameData.bottledExp = 0
+	gameData.owned_heros = []
+	gameData.duplicate_heros = []
+	gameData.unique_hero_count = 0
+	gameData.displayed_hero = null
+	gameData.squad_heros = []
+	gameData.squad_hp = 0
+	gameData.enemy = null
+	gameData.enemysDefeated = 0
+	gameData.bestEnemysDefeated = 0
+	gameData.dungeonOpen = false
+	//pull counts not reset except newbie banner
+	gameData.pullCounts[0] = 0
+	gameData.loginObtained = false
+	gameData.autoDungeon = false
+	gameData.autoDungeonDelay = 0
+	gameData.autoClaim = false
+
+	soft_reset()
+	updateSuperGems()
 }
 
 function updateGems() {
@@ -848,7 +987,8 @@ function summon3star() {
 function summon0star() {
 	rng = generateRandomNumber(0, 1)
 	if (rng == 1) {
-		bannerGold = 100 + (100*gameData.bestEnemysDefeated)
+		prestigeMulti = (1 + gameData.bestSuperGems)
+		bannerGold = (100 + 100 * gameData.bestEnemysDefeated) * prestigeMulti
 		gameData.gold += bannerGold
 		updateGold()
 		document.getElementById("bannerReward").innerHTML = "Recieved " + bannerGold + " Gold"
@@ -930,11 +1070,57 @@ function pullBanner(id) {
 	}
 }
 
+function soft_reset() {
+	//reset daily progress
+	document.getElementById("dailyRewardButton").disabled = false
+	genCalendar()
+
+	//update currencies
+	document.getElementById("currentDay").innerHTML = "Day " + gameData.day
+	updateGems()
+	updateGold()
+	document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
+
+	//tidy up menus
+	document.getElementById("autoDungeonButton").style.display = "none"
+	document.getElementById("autoClaimButton").style.display = "none"
+	document.getElementById("fasttrainStat").style.display = "none"
+	document.getElementById("giveexp").style.display = "none"
+	updateCollection()
+	document.getElementById("charStats").style.display = "none"
+	document.getElementById("dungeonReward").style.display = "none"
+
+	//tidy up gacha
+	document.getElementById("bannerReward").innerHTML = ""
+	document.getElementById("nextBanner1").disabled = false
+	document.getElementById("prevBanner2").disabled = false
+	document.getElementById("nextBanner2").disabled = true
+	document.getElementById("prevBanner3").disabled = true
+	if (gameData.gems < 1) {
+		document.getElementById("pullOnBanner1").disabled = true
+	} else if (gameData.pullCounts[0] == 0) {
+		document.getElementById("pullOnBanner1").disabled = false
+	}
+	document.getElementById("pullOnBanner2").disabled = true
+	document.getElementById("pullOnBanner3").disabled = true
+
+	document.getElementById("newbieBanner").style.display = "inline-block"
+	document.getElementById("standardBanner").style.display = "none"
+	document.getElementById("improvementBanner").style.display = "none"
+
+	//update dungeon status
+	gameData.enemy = generateEnemy(gameData.enemysDefeated)
+	document.getElementById("theDungeon").style.display = "none"
+	document.getElementById("enemyStats").style.display = "none"
+}
+
 function hard_reset() {
 	localStorage.clear()
 	gameData = {
 		gold: 100,
 		gems: 0,
+		superGems: 0,
+		bestSuperGems: 0,
 		day: 1,
 		dungeonTickets: 0,
 		autoDungeonTickets: 0, 
@@ -957,42 +1143,18 @@ function hard_reset() {
 		loginObtained: false,
 		autoDungeon: false,
 		autoDungeonDelay: 0,
-		autoClaim: false
+		autoClaim: false,
+		prestigeCount: 0
 	}
 	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
+	
+	//reset stuff common to prestige
+	soft_reset()
 
-	//reset daily progress
-	document.getElementById("dailyRewardButton").disabled = false
-	genCalendar()
-
-	//update currencies
-	document.getElementById("currentDay").innerHTML = "Day " + gameData.day
-	updateGems()
-	updateGold()
-	document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
-
-	//tidy up menus
-	document.getElementById("autoDungeonButton").style.display = "none"
-	document.getElementById("autoClaimButton").style.display = "none"
-	document.getElementById("fasttrainStat").style.display = "none"
-	document.getElementById("giveexp").style.display = "none"
-	updateCollection()
-
-	//tidy up gacha
-	document.getElementById("bannerReward").innerHTML = ""
-	document.getElementById("nextBanner1").disabled = true
-	document.getElementById("prevBanner2").disabled = true
-	document.getElementById("nextBanner2").disabled = false
-	document.getElementById("prevBanner3").disabled = false
-	document.getElementById("pullOnBanner1").disabled = true
-	document.getElementById("pullOnBanner2").disabled = true
-	document.getElementById("pullOnBanner3").disabled = true
-
-	//update dungeon status
-	gameData.enemy = generateEnemy(gameData.enemysDefeated)
-	document.getElementById("theDungeon").style.display = "none"
-	document.getElementById("enemyStats").style.display = "none"
-
+	//remove prestige stuff
+	document.getElementById("prestige").style.display = "none"
+	document.getElementById("superGemsOwned").style.display = "none"
+	document.getElementById("superGemPipe").style.display = "none"
 }
 
 //stops new versions from breaking old saves
@@ -1002,6 +1164,12 @@ function checkSaveFile() {
 	}
 	if (typeof gameData.gems === 'undefined') {
 		gameData.gems = 0
+	}
+	if (typeof gameData.superGems === 'undefined') {
+		gameData.superGems = 0
+	}
+	if (typeof gameData.bestSuperGems === 'undefined') {
+		gameData.bestSuperGems = 0
 	}
 	if (typeof gameData.day === 'undefined') {
 		gameData.day = 1
@@ -1077,6 +1245,9 @@ function checkSaveFile() {
 	}
 	if (typeof gameData.autoClaim === 'undefined') {
 		gameData.autoClaim = false
+	}
+	if (typeof gameData.prestigeCount === 'undefined') {
+		gameData.prestigeCount = 0
 	}
 }
 
@@ -1157,15 +1328,29 @@ if (savegame !== null) {
 		document.getElementById("theDungeon").style.display = "none"
 		document.getElementById("enemyStats").style.display = "none"
 	}
+
+	//only display prestige if unlocked
+	if (gameData.bestEnemysDefeated >= 10 || gameData.prestigeCount > 0) {
+		document.getElementById("prestige").style.display = "inline-block"
+		document.getElementById("superGemsOwned").style.display = "inline-block"
+		document.getElementById("superGemPipe").style.display = "inline-block"
+		updateSuperGems()
+	} else {
+		document.getElementById("prestige").style.display = "none"
+		document.getElementById("superGemsOwned").style.display = "none"
+		document.getElementById("superGemPipe").style.display = "none"
+	}
 } else {
 	document.getElementById("theDungeon").style.display = "none"
 	document.getElementById("enemyStats").style.display = "none"
 	document.getElementById("enterDungeonButton").disabled = true
-	document.getElementById("standardBanner").style.display = "none"
 	document.getElementById("autoDungeonButton").style.display = "none"
 	document.getElementById("autoClaimButton").style.display = "none"
 	document.getElementById("fasttrainStat").style.display = "none"
 	document.getElementById("giveexp").style.display = "none"
+	document.getElementById("prestige").style.display = "none"
+	document.getElementById("superGemsOwned").style.display = "none"
+	document.getElementById("superGemPipe").style.display = "none"
 }
 
 /* MAIN? */
