@@ -1,4 +1,5 @@
 var gameData = {
+	version: 0.16,
 	gold: 100,
 	gems: 0,
 	superGems: 0,
@@ -28,10 +29,10 @@ var gameData = {
 	autoDungeonDelay: 0,
 	autoClaim: false,
 	prestigeCount: 0,
-	/*qolTicket: 0,
+	qolTicket: 0,
 	permAutoDungeon: false,
 	permAutoClaim: false,
-	permFastTrainer: false*/
+	permFastTrainer: false
 }
 
 class Hero {
@@ -1096,6 +1097,7 @@ function prestigeGame() {
 
 	//reset everything
 	gameData = {
+		version: 0.16,
 		gold: 100,
 		gems: futureSuperGems,
 		superGems: newSuperGemCount,
@@ -1125,10 +1127,10 @@ function prestigeGame() {
 		autoDungeonDelay: 0,
 		autoClaim: false,
 		prestigeCount: newPrestigeCount,
-		/*qolTicket: 0,
+		qolTicket: 0,
 		permAutoDungeon: false,
 		permAutoClaim: false,
-		permFastTrainer: false*/
+		permFastTrainer: false
 	}
 
 	soft_reset()
@@ -1452,6 +1454,7 @@ function unlock_hard_reset() {
 function hard_reset() {
 	localStorage.clear()
 	gameData = {
+		version: 0.16,
 		gold: 100,
 		gems: 0,
 		superGems: 0,
@@ -1481,10 +1484,10 @@ function hard_reset() {
 		autoDungeonDelay: 0,
 		autoClaim: false,
 		prestigeCount: 0,
-		/*qolTicket: 0,
+		qolTicket: 0,
 		permAutoDungeon: false,
 		permAutoClaim: false,
-		permFastTrainer: false*/
+		permFastTrainer: false
 	}
 	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
 	
@@ -1501,6 +1504,9 @@ function hard_reset() {
 
 //stops new versions from breaking old saves
 function checkSaveFile() {
+	if (typeof gameData.version === 'undefined') {
+		gameData.version = 0.16
+	}
 	if (typeof gameData.gold === 'undefined') {
 		gameData.gold = 100
 	}
@@ -1594,7 +1600,7 @@ function checkSaveFile() {
 	if (typeof gameData.prestigeCount === 'undefined') {
 		gameData.prestigeCount = 0
 	}
-	/*if (typeof gameData.qolTicket === 'undefined') {
+	if (typeof gameData.qolTicket === 'undefined') {
 		gameData.qolTicket = 0
 	}
 	if (typeof gameData.permAutoDungeon === 'undefined') {
@@ -1605,10 +1611,13 @@ function checkSaveFile() {
 	}
 	if (typeof gameData.permFastTrainer === 'undefined') {
 		gameData.permFastTrainer = false
-	}*/
+	}
 }
 
 function checkImportedSaveFile(importedSave) {
+	if (typeof importedSave.version === 'undefined') {
+		return false
+	}
 	if (typeof importedSave.gold === 'undefined') {
 		return false
 	}
@@ -1702,14 +1711,19 @@ function checkImportedSaveFile(importedSave) {
 	if (typeof importedSave.prestigeCount === 'undefined') {
 		return false
 	}
-	/*if (typeof importedSave.qolTicket === 'undefined') {
+	if (typeof importedSave.qolTicket === 'undefined') {
 		return false
-	}*/
-
-	/*qolTicket: 0,
-	permAutoDungeon: false,
-	permAutoClaim: false,
-	permFastTrainer: false*/
+	}
+	if (typeof importedSave.permAutoDungeon === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.permAutoClaim === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.permFastTrainer === 'undefined') {
+		return false
+	}
+	//all checks past this point need to also do a version check to allow backwards compatibility
 
 	return true
 }
@@ -1742,6 +1756,9 @@ function import_save() {
 function run_startup() {
 	//check every variable in gameData for definition and initialize if missing
 	checkSaveFile()
+
+	//update version number
+	gameData.version = 0.16
 
 	//update currencies
 	document.getElementById("currentDay").innerHTML = "Day " + formatValue(gameData.day)
@@ -1872,3 +1889,5 @@ document.getElementById("bannerMilestones1").style.display = "none"
 document.getElementById("bannerMilestones2").style.display = "none"
 
 document.getElementById("truehardreset").style.display = "none"
+
+document.getElementById("versionText").innerHTML = "Version: v" + gameData.version
