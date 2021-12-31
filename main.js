@@ -864,8 +864,15 @@ function autoDungeon() {
 }
 
 function grabDaily() {
-	gameData.loginObtained = true
-	document.getElementById("dailyRewardButton").disabled = true
+	let rng = generateRandomNumber(0, 1)
+	if (rng == 1) {
+		gameData.loginObtained = true
+		document.getElementById("dailyRewardButton").disabled = true
+		document.getElementById("dailySavedText").innerHTML = ""
+	} else {
+		document.getElementById("dailySavedText").innerHTML = "BONUS: Claim Additional Reward!"
+	}
+	
 
 	document.getElementById("dailyGoldRewardText").innerHTML = ""
 	document.getElementById("dailyDungeonRewardText").innerHTML = ""
