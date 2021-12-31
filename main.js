@@ -1,5 +1,5 @@
 var gameData = {
-	version: 0.16,
+	version: 0.17,
 	gold: 100,
 	gems: 0,
 	superGems: 0,
@@ -32,7 +32,8 @@ var gameData = {
 	qolTicket: 0,
 	permAutoDungeon: false,
 	permAutoClaim: false,
-	permFastTrainer: false
+	permFastTrainer: false,
+	luckyStreak: 0
 }
 
 class Hero {
@@ -530,8 +531,8 @@ function updateCurrencyPage() {
 	parent.appendChild(document.createElement('p'))
 	parent.appendChild(generateCurrencyElement2("Daily Level", gameData.dailyLevel))
 	parent.appendChild(generateCurrencyElement2("Cleared Dungeon Level", gameData.bestEnemysDefeated))
-	parent.appendChild(generateCurrencyElement3("Pulled on the Standard Banner", gameData.pullCounts[1]))
-	parent.appendChild(generateCurrencyElement3("Pulled on the Improvement Banner", gameData.pullCounts[2]))
+	parent.appendChild(generateCurrencyElement3("pulled from the Standard Banner", gameData.pullCounts[1]))
+	parent.appendChild(generateCurrencyElement3("pulled from the Improvement Banner", gameData.pullCounts[2]))
 	if (gameData.prestigeCount > 0) {
 		parent.appendChild(generateCurrencyElement3("Prestiged", gameData.prestigeCount))
 	}
@@ -870,7 +871,12 @@ function grabDaily() {
 		document.getElementById("dailyRewardButton").disabled = true
 		document.getElementById("dailySavedText").innerHTML = ""
 	} else {
-		document.getElementById("dailySavedText").innerHTML = "BONUS: Claim Additional Reward!"
+		gameData.luckyStreak += 1
+		if (gameData.luckyStreak > 1) {
+			document.getElementById("dailySavedText").innerHTML = "BONUS: Claim Additional Reward! x" + gameData.luckyStreak
+		} else {
+			document.getElementById("dailySavedText").innerHTML = "BONUS: Claim Additional Reward!"
+		}
 	}
 	
 
@@ -952,9 +958,45 @@ function grabDaily() {
 	}
 }
 
+//runs when n is pressed
+/*function doc_keyN(e) {
+    if (e.key === 78) {
+        incrementDay();
+    }
+}
+//register the handler 
+document.addEventListener('keyN', doc_keyN, false);
+
+//runs when l is pressed
+function doc_keyL(e) {
+    if (e.key === 76) {
+        grabDaily();
+    }
+}
+//register the handler 
+document.addEventListener('keyL', doc_keyL, false);*/
+
+document.onkeydown = function (e) {
+	var evt = window.event || e
+	switch (evt.keyCode) {
+		case 76:
+			grabDaily()
+			break
+		case 78:
+			incrementDay()
+			break
+		case 85:
+			enterDungeon()
+			break
+	}
+}
+
 function incrementDay() {
 	//increment the day
 	gameData.day += 1
+	
+	//reset lucky streak
+	gameData.luckyStreak = 0
 
 	//update calendar
 	genCalendar()
@@ -1104,7 +1146,7 @@ function prestigeGame() {
 
 	//reset everything
 	gameData = {
-		version: 0.16,
+		version: 0.17,
 		gold: 100,
 		gems: futureSuperGems,
 		superGems: newSuperGemCount,
@@ -1137,7 +1179,8 @@ function prestigeGame() {
 		qolTicket: 0,
 		permAutoDungeon: false,
 		permAutoClaim: false,
-		permFastTrainer: false
+		permFastTrainer: false,
+		luckyStreak: 0
 	}
 
 	soft_reset()
@@ -1461,7 +1504,7 @@ function unlock_hard_reset() {
 function hard_reset() {
 	localStorage.clear()
 	gameData = {
-		version: 0.16,
+		version: 0.17,
 		gold: 100,
 		gems: 0,
 		superGems: 0,
@@ -1494,7 +1537,8 @@ function hard_reset() {
 		qolTicket: 0,
 		permAutoDungeon: false,
 		permAutoClaim: false,
-		permFastTrainer: false
+		permFastTrainer: false,
+		luckyStreak: 0
 	}
 	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
 	
@@ -1512,7 +1556,7 @@ function hard_reset() {
 //stops new versions from breaking old saves
 function checkSaveFile() {
 	if (typeof gameData.version === 'undefined') {
-		gameData.version = 0.16
+		gameData.version = 0.17
 	}
 	if (typeof gameData.gold === 'undefined') {
 		gameData.gold = 100
@@ -1618,6 +1662,9 @@ function checkSaveFile() {
 	}
 	if (typeof gameData.permFastTrainer === 'undefined') {
 		gameData.permFastTrainer = false
+	}
+	if (typeof gameData.luckyStreak === 'undefined') {
+		gameData.luckyStreak = 0
 	}
 }
 
@@ -1731,6 +1778,15 @@ function checkImportedSaveFile(importedSave) {
 		return false
 	}
 	//all checks past this point need to also do a version check to allow backwards compatibility
+	if (importedSave.version < 0.17) {
+		if (typeof importedSave.luckyStreak === 'undefined') {
+			importedSave.luckyStreak = 0
+		}
+	} else {
+		if (typeof importedSave.luckyStreak === 'undefined') {
+			return false
+		}
+	}
 
 	return true
 }
@@ -1765,7 +1821,7 @@ function run_startup() {
 	checkSaveFile()
 
 	//update version number
-	gameData.version = 0.16
+	gameData.version = 0.17
 
 	//update currencies
 	document.getElementById("currentDay").innerHTML = "Day " + formatValue(gameData.day)
