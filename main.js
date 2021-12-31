@@ -716,15 +716,15 @@ function grabDaily() {
 	document.getElementById("dailyRewardButton").disabled = true
 	if (gameData.day % 28 == 0) {
 		gameData.gems += 5
-		document.getElementById("dailyRewardText").innerHTML = "Recieved 5 Gems"
+		document.getElementById("dailyRewardText").innerHTML = "Received 5 Gems"
 		updateGems()
 	} else if (gameData.day % 7 == 0) {
 		gameData.gems += 1
-		document.getElementById("dailyRewardText").innerHTML = "Recieved 1 Gem"
+		document.getElementById("dailyRewardText").innerHTML = "Received 1 Gem"
 		updateGems()
 	} else if (gameData.day % 3 == 0) {
 		gameData.dungeonTickets += 1
-		document.getElementById("dailyRewardText").innerHTML = "Recieved 1 Dungeon Ticket"
+		document.getElementById("dailyRewardText").innerHTML = "Received 1 Dungeon Ticket"
 		document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
 		document.getElementById("enterDungeonButton").disabled = false
 	}
@@ -732,7 +732,7 @@ function grabDaily() {
 		let prestigeMulti = (1 + gameData.bestSuperGems)
 		let dailyGold = (10 + (10 * gameData.bestEnemysDefeated)) * prestigeMulti
 		gameData.gold += dailyGold
-		document.getElementById("dailyRewardText").innerHTML = "Recieved " + dailyGold + " Gold"
+		document.getElementById("dailyRewardText").innerHTML = "Received " + dailyGold + " Gold"
 		updateGold()
 	}
 }
@@ -831,8 +831,8 @@ function updateSuperGems() {
 
 	document.getElementById("superGemsOwned").innerHTML = gameData.superGems + " S-Gems"
 	document.getElementById("superGemCount").innerHTML = "You currently have " + gameData.superGems + " Super Gems"
-	document.getElementById("bestSuperGemCount").innerHTML = "Your Super Gems recieved is " + gameData.bestSuperGems + ": Multiplying Gold and EXP Gained by " + (1+gameData.bestSuperGems)
-	document.getElementById("futureSuperGemCount").innerHTML = "Recieve " + futureSuperGems + " Super Gems"
+	document.getElementById("bestSuperGemCount").innerHTML = "Your Super Gems received is " + gameData.bestSuperGems + ": Multiplying Gold and EXP Gained by " + (1+gameData.bestSuperGems)
+	document.getElementById("futureSuperGemCount").innerHTML = "Receive " + futureSuperGems + " Super Gems"
 	document.getElementById("futureHeroSuperGems").innerHTML = futureHeroSuperGems + " Super Gems for hero levels past 10"
 	document.getElementById("futureDungeonSuperGems").innerHTML = futureDungeonSuperGems + " Super Gems for dungeon levels cleared past 10"
 	document.getElementById("superGemDayMulti").innerHTML = superGemDayMulti + "x Multiplier for prestiging on day " + gameData.day
@@ -914,7 +914,7 @@ function updateGems() {
 	}
 
 	//unlock third banner
-	if (gameData.bestEnemysDefeated >= 5) {
+	if (gameData.bestEnemysDefeated >= 5 || gameData.prestigeCount > 0) {
 		document.getElementById("nextBanner2").disabled = false
 		document.getElementById("prevBanner3").disabled = false
 	}
@@ -934,7 +934,7 @@ function updateGems() {
 	}
 
 	//enable improvement banner
-	if (gameData.gems >= 10 && gameData.bestEnemysDefeated >= 5) {
+	if (gameData.gems >= 10 && (gameData.bestEnemysDefeated >= 5 || gameData.prestigeCount > 0)) {
 		document.getElementById("pullOnBanner3").disabled = false
 	} else {
 		document.getElementById("pullOnBanner3").disabled = true
@@ -1008,7 +1008,7 @@ function checkWhereDuplicate(hero) {
 
 function summon3star() {
 	let rng = generateRandomNumber(0, 5)
-	let result_hero = hero_pool[rng]
+	let result_hero = JSON.parse(JSON.stringify(hero_pool[rng]))
 
 	//check if duplicate
 	let duplicateHero = checkIfDuplicate(result_hero)
@@ -1034,12 +1034,12 @@ function summon0star() {
 		let bannerGold = (100 + 100 * gameData.bestEnemysDefeated) * prestigeMulti
 		gameData.gold += bannerGold
 		updateGold()
-		document.getElementById("bannerReward").innerHTML = "Recieved " + bannerGold + " Gold"
+		document.getElementById("bannerReward").innerHTML = "Received " + bannerGold + " Gold"
 	} else {
 		gameData.dungeonTickets += 10
 		document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
 		document.getElementById("enterDungeonButton").disabled = false
-		document.getElementById("bannerReward").innerHTML = "Recieved 10 Dungeon Tickets"
+		document.getElementById("bannerReward").innerHTML = "Received 10 Dungeon Tickets"
 	}
 }
 
@@ -1083,25 +1083,25 @@ function pullBanner(id) {
 
 			if (results_reward == 0) {
 				gameData.autoDungeonTickets += 10
-				document.getElementById("bannerReward").innerHTML = "Recieved 10 Auto Dungeon Tickets"
+				document.getElementById("bannerReward").innerHTML = "Received 10 Auto Dungeon Tickets"
 				document.getElementById("autoDungeonButton").disabled = false
 			} else if (results_reward == 1) {
 				gameData.autoDailyClaim += 10
-				document.getElementById("bannerReward").innerHTML = "Recieved 10 Auto Claim Tickets"
+				document.getElementById("bannerReward").innerHTML = "Received 10 Auto Claim Tickets"
 				document.getElementById("autoClaimButton").disabled = false
 			} else if (results_reward == 2) {
 				gameData.fastTrainer += 10
-				document.getElementById("bannerReward").innerHTML = "Recieved 10 Fast Trainers"
+				document.getElementById("bannerReward").innerHTML = "Received 10 Fast Trainers"
 			} else if (results_reward == 3) {
 				gameData.bottledExp += 5
-				document.getElementById("bannerReward").innerHTML = "Recieved 5 Bottled Experience"
+				document.getElementById("bannerReward").innerHTML = "Received 5 Bottled Experience"
 				document.getElementById("giveexp").disabled = false
 			} else if (results_reward == 4) {
 				gameData.unLimiter += 1
-				document.getElementById("bannerReward").innerHTML = "Recieved 1 UN-LIMITER"
+				document.getElementById("bannerReward").innerHTML = "Received 1 UN-LIMITER"
 			} else if (results_reward == 5) {
 				gameData.dailyLevel += 1
-				document.getElementById("bannerReward").innerHTML = "Recieved 1 Daily Improvement, Increasing your Daily Level!"
+				document.getElementById("bannerReward").innerHTML = "Received 1 Daily Improvement, Increasing your Daily Level!"
 			}
 
 			//display these buttons after first pull on new banner
@@ -1125,10 +1125,17 @@ function soft_reset() {
 	document.getElementById("ticketCount").innerHTML = "You have " + gameData.dungeonTickets + " Dungeon Tickets"
 
 	//tidy up menus
-	document.getElementById("autoDungeonButton").style.display = "none"
-	document.getElementById("autoClaimButton").style.display = "none"
-	document.getElementById("fasttrainStat").style.display = "none"
-	document.getElementById("giveexp").style.display = "none"
+	if (gameData.pullCounts[2] > 0) {
+		document.getElementById("autoClaimButton").style.display = "inline-block"
+		document.getElementById("autoDungeonButton").style.display = "inline-block"
+		document.getElementById("fasttrainStat").style.display = "inline-block"
+		document.getElementById("giveexp").style.display = "inline-block"
+	} else {
+		document.getElementById("autoClaimButton").style.display = "none"
+		document.getElementById("autoDungeonButton").style.display = "none"
+		document.getElementById("fasttrainStat").style.display = "none"
+		document.getElementById("giveexp").style.display = "none"
+	}
 	updateCollection()
 	document.getElementById("charStats").style.display = "none"
 	document.getElementById("dungeonReward").style.display = "none"
@@ -1137,15 +1144,17 @@ function soft_reset() {
 	document.getElementById("bannerReward").innerHTML = ""
 	document.getElementById("nextBanner1").disabled = false
 	document.getElementById("prevBanner2").disabled = false
-	document.getElementById("nextBanner2").disabled = true
-	document.getElementById("prevBanner3").disabled = true
+	if (gameData.prestigeCount == 0) {
+		document.getElementById("nextBanner2").disabled = true
+		document.getElementById("prevBanner3").disabled = true
+		document.getElementById("pullOnBanner3").disabled = true
+	}
 	if (gameData.gems < 1) {
 		document.getElementById("pullOnBanner1").disabled = true
 	} else if (gameData.pullCounts[0] == 0) {
 		document.getElementById("pullOnBanner1").disabled = false
 	}
 	document.getElementById("pullOnBanner2").disabled = true
-	document.getElementById("pullOnBanner3").disabled = true
 
 	document.getElementById("newbieBanner").style.display = "inline-block"
 	document.getElementById("standardBanner").style.display = "none"
