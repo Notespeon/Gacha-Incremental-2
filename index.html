@@ -220,9 +220,17 @@
 		</div>
 		<div id="settingsMenu">
 			<p></p>
-			<p>Version: v0.10</p>
+			<p>Version: v0.11</p>
 			<p></p>
-			<button onclick="hard_reset()">HARD RESET!!</button>
+			<p id="importexporttext"></p>
+			<p></p>
+			<button onclick="import_save()">Import Save</button>
+			<p></p>
+			<button onclick="export_save()">Export Save</button>
+			<p></p>
+			<button onclick="unlock_hard_reset()">HARD RESET</button>
+			<p></p>
+			<button id="truehardreset" class="red" onclick="hard_reset()" disabled>HARD RESET!!</button>
 		</div>
 		<script src="main.js" charset="utf-8" type="text/javascript"></script>
 	</body>

@@ -387,3 +387,7 @@ progress:after {
 .pressed {
   background-color: #4CAF50;
 }
+
+.red {
+  color: red;
+}

@@ -29,6 +29,37 @@ var gameData = {
 	prestigeCount: 0
 }
 
+var importedSave = {
+	gold: 100,
+	gems: 0,
+	superGems: 0,
+	bestSuperGems: 0,
+	day: 1,
+	dungeonTickets: 0,
+	autoDungeonTickets: 0, 
+	autoDailyClaim: 0,
+	unLimiter: 0,
+	dailyLevel: 1,
+	fastTrainer: 0,
+	bottledExp: 0,
+	owned_heros: [],
+	duplicate_heros: [],
+	unique_hero_count: 0,
+	displayed_hero: null,
+	squad_heros: [],
+	squad_hp: 0,
+	enemy: null,
+	enemysDefeated: 0,
+	bestEnemysDefeated: 0,
+	dungeonOpen: false,
+	pullCounts: [0, 0, 0],
+	loginObtained: false,
+	autoDungeon: false,
+	autoDungeonDelay: 0,
+	autoClaim: false,
+	prestigeCount: 0
+}
+
 class Hero {
 	constructor(id, name, stars, element, hp, attack, defence, resistance, description, image) {
 		this.id = id;
@@ -77,7 +108,7 @@ var hero_pool = [
 ];
 
 function updateHeroStats(hero) {
-	var bonusMulti = hero.level * (2**hero.rank) * Math.max(1, hero.level - 9) * Math.max(1, hero.level - 19)
+	let bonusMulti = hero.level * (2**hero.rank) * Math.max(1, hero.level - 9) * Math.max(1, hero.level - 19)
 
 	hero.hp = hero.basehp * hero.hpupgradelevel * bonusMulti
 	hero.attack = hero.baseatk * hero.atkupgradelevel * bonusMulti
@@ -91,7 +122,7 @@ function updateHeroStats(hero) {
 }
 
 function checkLevelUp(hero, slot) {
-	var levellingUp = false
+	let levellingUp = false
 	if (hero.experience >= 10*(2**(hero.level-1)) && hero.level < (10 * (2**hero.rank))) {
 		levellingUp = true
 	}
@@ -117,7 +148,7 @@ function checkLevelUp(hero, slot) {
 
 function showHeroStats(id) {
 	gameData.displayed_hero = id
-	var hero = gameData.owned_heros[id]
+	let hero = gameData.owned_heros[id]
 	//display hero stats
 	document.getElementById("display_name").innerHTML = hero.name
 	document.getElementById("display_stars").innerHTML = hero.stars
@@ -137,7 +168,7 @@ function showHeroStats(id) {
 }
 
 function selectHero() {
-	id = gameData.displayed_hero
+	let id = gameData.displayed_hero
 	if (gameData.squad_heros.length < 3) {
 		if (!gameData.squad_heros.includes(id)) {
 			gameData.squad_heros.push(id)
@@ -154,7 +185,7 @@ function selectHero() {
 
 function updateDungeon() {
 	//set the dungeon as the parent
-	const parent = document.getElementById("theDungeonImages")
+	let parent = document.getElementById("theDungeonImages")
 
 	//clear all elements
 	while (parent.firstChild) {
@@ -162,14 +193,14 @@ function updateDungeon() {
 	}
 
 	//set background
-	background_image = document.createElement('img')
+	let background_image = document.createElement('img')
 	background_image.setAttribute('src', 'scuffed_assets/SnowBackgroundNight.png')
 	background_image.setAttribute('class', 'dgbackground')
 	parent.appendChild(background_image)
 
 	//place heros
 	for (var i = 0; i < gameData.squad_heros.length; i++) {
-		hero_image = document.createElement('img')
+		let hero_image = document.createElement('img')
 		hero_image.setAttribute('src', gameData.owned_heros[gameData.squad_heros[i]].image)
 		hero_image.setAttribute('class', 'hero'+i)
 		parent.appendChild(hero_image)
@@ -178,7 +209,7 @@ function updateDungeon() {
 	//place enemies
 	if (gameData.enemy != null && gameData.squad_heros.length > 0) {
 		showEnemyStats()
-		enemy_image = document.createElement('img')
+		let enemy_image = document.createElement('img')
 		enemy_image.setAttribute('src', 'scuffed_assets/enemy_1.png')
 		enemy_image.setAttribute('class', 'enemy')
 		parent.appendChild(enemy_image)
@@ -189,9 +220,9 @@ function updateDungeon() {
 }
 
 function rankUpHero() {
-	id = gameData.displayed_hero
-	var hero = gameData.owned_heros[id]
-	rank = hero.rank
+	let id = gameData.displayed_hero
+	let hero = gameData.owned_heros[id]
+	let rank = hero.rank
 
 	if ((hero.level >= (10+(rank*10))) && (gameData.duplicate_heros[id] >= (10**rank)) && (gameData.unLimiter >= (10**rank))) {
 		document.getElementById("rankUpConfirm").disabled = true
@@ -206,9 +237,9 @@ function rankUpHero() {
 }
 
 function rankUpDisplay() {
-	id = gameData.displayed_hero
-	var hero = gameData.owned_heros[id]
-	rank = hero.rank
+	let id = gameData.displayed_hero
+	let hero = gameData.owned_heros[id]
+	let rank = hero.rank
 
 	document.getElementById("rankUp").style.display = "inline-block"
 	document.getElementById("heroTrain").style.display = "none"
@@ -223,8 +254,8 @@ function rankUpDisplay() {
 }
 
 function trainHeroDisplay(stat) {
-	id = gameData.displayed_hero
-	var hero = gameData.owned_heros[id]
+	let id = gameData.displayed_hero
+	let hero = gameData.owned_heros[id]
 	document.getElementById("trainStat").disabled = true
 	document.getElementById("fasttrainStat").disabled = true
 	document.getElementById("rankUp").style.display = "none"
@@ -293,19 +324,21 @@ function trainHeroDisplay(stat) {
 }
 
 function bottleGains(level) {
-	prestigeMulti = (1 + gameData.bestSuperGems)
+	let prestigeMulti = (1 + gameData.bestSuperGems)
 
-	if (level == 1) {
-		return 1
+	/*if (level == 1) {
+		return 1*prestigeMulti
 	} else {
-		downScaling = 2**(Math.floor((level)/10))
+		let downScaling = 2**(Math.floor((level)/10))
 		return 0.5*prestigeMulti*(2**(level-1))/downScaling
-	}
+	}*/
+
+	return gameData.bestEnemysDefeated*10*prestigeMulti
 }
 
 function giveHeroExp() {
-	id = gameData.displayed_hero
-	hero = gameData.owned_heros[id]
+	let id = gameData.displayed_hero
+	let hero = gameData.owned_heros[id]
 
 	if (gameData.bottledExp > 0) {
 		gameData.bottledExp -= 1
@@ -328,8 +361,8 @@ function fastTrainHero(stat) {
 }
 
 function trainHero(stat) {
-	id = gameData.displayed_hero
-	hero = gameData.owned_heros[id]
+	let id = gameData.displayed_hero
+	let hero = gameData.owned_heros[id]
 
 	if (gameData.gold >= 100) {
 		if (stat == 'hp') {
@@ -368,18 +401,18 @@ function trainHero(stat) {
 
 function genCalendar() {
 	// change data into the 1-28 range
-	calendarDay = gameData.day%28
+	let calendarDay = gameData.day%28
 	if (calendarDay == 0) {
 		calendarDay = 28
 	}
-	const cont = document.getElementById('dailyCalendarDiv')
-	const ul = document.createElement('ul')
+	let cont = document.getElementById('dailyCalendarDiv')
+	let ul = document.createElement('ul')
 
 	ul.setAttribute('class', 'dailyCalendar')
 
 	for (var i = 1; i < 29; i++) {
-		const li = document.createElement('li')
-		const sp = document.createElement('span')
+		let li = document.createElement('li')
+		let sp = document.createElement('span')
 		if (i == calendarDay) {
 			sp.setAttribute('class', 'active')
 		} else{
@@ -430,18 +463,18 @@ function tab(tab) {
 }
 
 function generateEnemy(level) {
-	element = 'snow'
-	rng = generateRandomNumber(0, 100)
-	hp = 50 + rng
+	let element = 'snow'
+	let rng = generateRandomNumber(0, 100)
+	let hp = 50 + rng
 	hp = hp*(2**level)
 	rng = generateRandomNumber(0, 10)
-	attack = 5 + rng
+	let attack = 5 + rng
 	attack = attack*(2**level)
 	rng = generateRandomNumber(0, 10)
-	defence = 5 + rng
+	let defence = 5 + rng
 	defence = defence*(2**level)
 	rng = generateRandomNumber(0, 1)
-	style = 'defence'
+	let style = 'defence'
 	if (rng == 0) {
 		style = 'resistance'
 	}
@@ -451,8 +484,8 @@ function generateEnemy(level) {
 }
 
 function updateHealth() {
-	squadtotalhp = 0
-	squadcurrenthp = gameData.squad_hp
+	let squadtotalhp = 0
+	let squadcurrenthp = gameData.squad_hp
 	for (var i = 0; i < gameData.squad_heros.length; i++) {
 		squadtotalhp += gameData.owned_heros[gameData.squad_heros[i]].hp
 	}
@@ -479,11 +512,11 @@ function dungeonBattle() {
 }
 
 function gainExperience(kills) {
-	xpGained = 0
+	let xpGained = 0
 	for (var i = 0; i < kills; i++) {
 		xpGained += (i + 1)
 	}
-	prestigeMulti = (1 + gameData.bestSuperGems)
+	let prestigeMulti = (1 + gameData.bestSuperGems)
 
 	xpGained = xpGained * prestigeMulti
 
@@ -493,12 +526,12 @@ function gainExperience(kills) {
 }
 
 function gainGold(kills) {
-	goldGained = 0
+	let goldGained = 0
 	for (var i = 0; i < kills; i++) {
 		goldGained += (i + 1)
 	}
 
-	prestigeMulti = (1 + gameData.bestSuperGems)
+	let prestigeMulti = (1 + gameData.bestSuperGems)
 
 	return goldGained * 5 * prestigeMulti
 }
@@ -508,7 +541,7 @@ function battleDefeat() {
 	if (gameData.squad_heros.length > 0) {
 		gameData.squad_hp = 0
 		for (var i = 0; i < gameData.squad_heros.length; i++) {
-			hero = gameData.owned_heros[gameData.squad_heros[i]]
+			let hero = gameData.owned_heros[gameData.squad_heros[i]]
 			gameData.squad_hp += hero.hp
 			hero.experience += gainExperience(gameData.enemysDefeated)
 			checkLevelUp(hero, i)
@@ -541,7 +574,7 @@ function battleDefeat() {
 		}
 
 		//reward gems per level cleared, increasing per 5 levels
-		rewardGems = 0
+		let rewardGems = 0
 		while(gameData.bestEnemysDefeated < gameData.enemysDefeated) {
 			rewardGems += 1 + Math.floor((1 + gameData.bestEnemysDefeated)/5)
 			gameData.bestEnemysDefeated += 1
@@ -586,13 +619,13 @@ function battleTick(squad, enemy) {
 }
 
 function battleAttack() {
-	enemy = gameData.enemy
+	let enemy = gameData.enemy
 
 	//atk, def, res
-	squad = [0, 0, 0]
+	let squad = [0, 0, 0]
 
 	for (var i = 0; i < gameData.squad_heros.length; i++) {
-		unit = gameData.owned_heros[gameData.squad_heros[0]]
+		let unit = gameData.owned_heros[gameData.squad_heros[0]]
 		squad[0] += unit.attack
 		squad[1] += unit.defence
 		squad[2] += unit.resistance
@@ -696,8 +729,8 @@ function grabDaily() {
 		document.getElementById("enterDungeonButton").disabled = false
 	}
 	else {
-		prestigeMulti = (1 + gameData.bestSuperGems)
-		dailyGold = (10 + (10 * gameData.bestEnemysDefeated)) * prestigeMulti
+		let prestigeMulti = (1 + gameData.bestSuperGems)
+		let dailyGold = (10 + (10 * gameData.bestEnemysDefeated)) * prestigeMulti
 		gameData.gold += dailyGold
 		document.getElementById("dailyRewardText").innerHTML = "Recieved " + dailyGold + " Gold"
 		updateGold()
@@ -761,10 +794,10 @@ function changeBanner(bannerId) {
 
 function superGemDayMultiCalc(day) {
 	if (day < 10) {
-		return 10 - Math.floor((1+day)/2)
+		return 10 - Math.floor((day)/2)
 	} else if (day < 100) {
 		return 5 - Math.floor((day-10)/30)
-	} else if (day < 365) {
+	} else if (day < 366) {
 		return 2
 	} else {
 		return 1
@@ -772,7 +805,7 @@ function superGemDayMultiCalc(day) {
 }
 
 function futureHeroSuperGemsCalc() {
-	futureHeroSuperGems = 0
+	let futureHeroSuperGems = 0
 	for (var i = 0; i < gameData.owned_heros.length; i++) {
 		if (gameData.owned_heros[i].level > 10) {
 			futureHeroSuperGems += (gameData.owned_heros[i].level - 10)
@@ -784,8 +817,7 @@ function futureHeroSuperGemsCalc() {
 
 //update super gem count
 function updateSuperGems() {
-
-	futureHeroSuperGems = futureHeroSuperGemsCalc()
+	let futureHeroSuperGems = futureHeroSuperGemsCalc()
 
 	if (gameData.bestEnemysDefeated > 10) {
 		futureDungeonSuperGems = gameData.bestEnemysDefeated - 10
@@ -793,13 +825,13 @@ function updateSuperGems() {
 		futureDungeonSuperGems = 0
 	}
 
-	superGemDayMulti = superGemDayMultiCalc(gameData.day)
+	let superGemDayMulti = superGemDayMultiCalc(gameData.day)
 
-	futureSuperGems = (futureHeroSuperGems + futureDungeonSuperGems) * superGemDayMulti
+	let futureSuperGems = (futureHeroSuperGems + futureDungeonSuperGems) * superGemDayMulti
 
 	document.getElementById("superGemsOwned").innerHTML = gameData.superGems + " S-Gems"
 	document.getElementById("superGemCount").innerHTML = "You currently have " + gameData.superGems + " Super Gems"
-	document.getElementById("bestSuperGemCount").innerHTML = "Your best ever Super Gems is " + gameData.bestSuperGems + ": Multiplying Gold and EXP Gained by " + (1+gameData.bestSuperGems)
+	document.getElementById("bestSuperGemCount").innerHTML = "Your Super Gems recieved is " + gameData.bestSuperGems + ": Multiplying Gold and EXP Gained by " + (1+gameData.bestSuperGems)
 	document.getElementById("futureSuperGemCount").innerHTML = "Recieve " + futureSuperGems + " Super Gems"
 	document.getElementById("futureHeroSuperGems").innerHTML = futureHeroSuperGems + " Super Gems for hero levels past 10"
 	document.getElementById("futureDungeonSuperGems").innerHTML = futureDungeonSuperGems + " Super Gems for dungeon levels cleared past 10"
@@ -813,7 +845,7 @@ function updateSuperGems() {
 //prestige
 function prestigeGame() {
 	//give super gems
-	futureHeroSuperGems = futureHeroSuperGemsCalc()
+	let futureHeroSuperGems = futureHeroSuperGemsCalc()
 
 	if (gameData.bestEnemysDefeated > 10) {
 		futureDungeonSuperGems = gameData.bestEnemysDefeated - 10
@@ -821,46 +853,54 @@ function prestigeGame() {
 		futureDungeonSuperGems = 0
 	}
 
-	superGemDayMulti = superGemDayMultiCalc(gameData.day)
+	let superGemDayMulti = superGemDayMultiCalc(gameData.day)
 
-	futureSuperGems = (futureHeroSuperGems + futureDungeonSuperGems) * superGemDayMulti
+	let futureSuperGems = (futureHeroSuperGems + futureDungeonSuperGems) * superGemDayMulti
 
+	//update super gems
 	gameData.superGems += futureSuperGems
 	
 	//update best super gems
-	if (gameData.superGems > gameData.bestSuperGems) {
-		gameData.bestSuperGems = gameData.superGems
-	}
+	gameData.bestSuperGems += futureSuperGems
 
-	gameData.prestigeCount += 1
+	let bestCurrentSuperGems = gameData.bestSuperGems
+
+	document.getElementById("prestigeConfirm").disabled = true
+	let newPrestigeCount = gameData.prestigeCount += 1
+
+	let oldPullCounts = gameData.pullCounts
 
 	//reset everything
-	gameData.gold = 100
-	gameData.gems = gameData.superGems //give regular gems
-	gameData.day = 1
-	gameData.dungeonTickets = 0
-	gameData.autoDungeonTickets = 0
-	gameData.autoDailyClaim = 0
-	gameData.unLimiter = 0
-	gameData.dailyLevel = 1
-	gameData.fastTrainer = 0
-	gameData.bottledExp = 0
-	gameData.owned_heros = []
-	gameData.duplicate_heros = []
-	gameData.unique_hero_count = 0
-	gameData.displayed_hero = null
-	gameData.squad_heros = []
-	gameData.squad_hp = 0
-	gameData.enemy = null
-	gameData.enemysDefeated = 0
-	gameData.bestEnemysDefeated = 0
-	gameData.dungeonOpen = false
-	//pull counts not reset except newbie banner
-	gameData.pullCounts[0] = 0
-	gameData.loginObtained = false
-	gameData.autoDungeon = false
-	gameData.autoDungeonDelay = 0
-	gameData.autoClaim = false
+	gameData = {
+		gold: 100,
+		gems: futureSuperGems,
+		superGems: futureSuperGems,
+		bestSuperGems: bestCurrentSuperGems,
+		day: 1,
+		dungeonTickets: 0,
+		autoDungeonTickets: 0, 
+		autoDailyClaim: 0,
+		unLimiter: 0,
+		dailyLevel: 1,
+		fastTrainer: 0,
+		bottledExp: 0,
+		owned_heros: [],
+		duplicate_heros: [],
+		unique_hero_count: 0,
+		displayed_hero: null,
+		squad_heros: [],
+		squad_hp: 0,
+		enemy: null,
+		enemysDefeated: 0,
+		bestEnemysDefeated: 0,
+		dungeonOpen: false,
+		pullCounts: [0, oldPullCounts[1], oldPullCounts[2]],
+		loginObtained: false,
+		autoDungeon: false,
+		autoDungeonDelay: 0,
+		autoClaim: false,
+		prestigeCount: newPrestigeCount
+	}
 
 	soft_reset()
 	updateSuperGems()
@@ -916,7 +956,7 @@ function generateRandomNumber(min, max) {
 
 function updateCollection() {
 	//set the charList as the parent
-	const parent = document.getElementById('charList')
+	let parent = document.getElementById('charList')
 
 	//clear all elements
 	while (parent.firstChild) {
@@ -928,7 +968,7 @@ function updateCollection() {
 
 	//place each hero
 	for (var i = 0; i < gameData.owned_heros.length; i++) {
-		hero_image = document.createElement('img')
+		let hero_image = document.createElement('img')
 		hero_image.setAttribute('src', gameData.owned_heros[i].image)
 		hero_image.setAttribute('id', 'heroColImage'+(i+1))
 		hero_image.setAttribute('onclick', 'showHeroStats('+(i)+')')
@@ -967,14 +1007,14 @@ function checkWhereDuplicate(hero) {
 }
 
 function summon3star() {
-	rng = generateRandomNumber(0, 5)
-	result_hero = hero_pool[rng]
+	let rng = generateRandomNumber(0, 5)
+	let result_hero = hero_pool[rng]
 
 	//check if duplicate
-	duplicateHero = checkIfDuplicate(result_hero)
+	let duplicateHero = checkIfDuplicate(result_hero)
 
 	if (duplicateHero) {
-		id = checkWhereDuplicate(result_hero)
+		let id = checkWhereDuplicate(result_hero)
 		gameData.duplicate_heros[id] += 1
 		document.getElementById("bannerReward").innerHTML = "Summoned Duplicate Hero: " + hero_pool[rng].name + ". You have " + gameData.duplicate_heros[id] + " duplicates."
 	} else {
@@ -988,10 +1028,10 @@ function summon3star() {
 }
 
 function summon0star() {
-	rng = generateRandomNumber(0, 1)
+	let rng = generateRandomNumber(0, 1)
 	if (rng == 1) {
-		prestigeMulti = (1 + gameData.bestSuperGems)
-		bannerGold = (100 + 100 * gameData.bestEnemysDefeated) * prestigeMulti
+		let prestigeMulti = (1 + gameData.bestSuperGems)
+		let bannerGold = (100 + 100 * gameData.bestEnemysDefeated) * prestigeMulti
 		gameData.gold += bannerGold
 		updateGold()
 		document.getElementById("bannerReward").innerHTML = "Recieved " + bannerGold + " Gold"
@@ -1021,7 +1061,7 @@ function pullBanner(id) {
 			updateGems()
 
 			//determine star ranking
-			rng = generateRandomNumber(1, 100)
+			let rng = generateRandomNumber(1, 100)
 
 			if (rng > 50) {
 				//3 star
@@ -1037,9 +1077,9 @@ function pullBanner(id) {
 			updateGems()
 
 			//determine item reward
-			rng = generateRandomNumber(0, 9)
-			rewards = [0, 0, 1, 1, 2, 2, 3, 3, 4, 5]
-			results_reward = rewards[rng]
+			let rng = generateRandomNumber(0, 9)
+			let rewards = [0, 0, 1, 1, 2, 2, 3, 3, 4, 5]
+			let results_reward = rewards[rng]
 
 			if (results_reward == 0) {
 				gameData.autoDungeonTickets += 10
@@ -1115,6 +1155,11 @@ function soft_reset() {
 	gameData.enemy = generateEnemy(gameData.enemysDefeated)
 	document.getElementById("theDungeon").style.display = "none"
 	document.getElementById("enemyStats").style.display = "none"
+}
+
+function unlock_hard_reset() {
+	document.getElementById("truehardreset").style.display = "inline-block"
+	document.getElementById("truehardreset").disabled = false
 }
 
 function hard_reset() {
@@ -1254,18 +1299,120 @@ function checkSaveFile() {
 	}
 }
 
-//save data stuff
-var saveGameLoop = window.setInterval(function() {
-	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
-	console.log('saving...')
-}, 15000)
+function checkImportedSaveFile(importedSave) {
+	if (typeof importedSave.gold === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.gems === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.superGems === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.bestSuperGems === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.day === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.dungeonTickets === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.autoDungeonTickets === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.autoDailyClaim === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.unLimiter === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.dailyLevel === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.fastTrainer === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.bottledExp === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.owned_heros === 'undefined') {
+		return false
+	} else {
+		for (var i = 0; i < importedSave.owned_heros.length; i++) {
+			if (typeof importedSave.owned_heros[i].rank === 'undefined') {
+				return false
+			}
+		}
+	}
+	if (typeof importedSave.duplicate_heros === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.unique_hero_count === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.displayed_hero === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.squad_heros === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.squad_hp === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.enemy === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.enemysDefeated === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.bestEnemysDefeated === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.dungeonOpen === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.pullCounts === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.loginObtained === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.autoDungeon === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.autoDungeonDelay === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.autoClaim === 'undefined') {
+		return false
+	}
+	if (typeof importedSave.prestigeCount === 'undefined') {
+		return false
+	}
 
-//load data stuff
-var savegame = JSON.parse(localStorage.getItem('gachaIncrementalSave'))
-console.log(savegame)
-if (savegame !== null) {
-	gameData = savegame
+	return true
+}
 
+function export_save() {
+	window.prompt("Copy to clipboard: Ctrl+C, Enter", btoa(JSON.stringify(gameData)))
+}
+
+function import_save() {
+	let importedSave = JSON.parse(atob(window.prompt("Enter exported data", btoa(JSON.stringify(gameData)))))
+	if (importedSave !== null) {
+		if (checkImportedSaveFile(importedSave)) {
+			gameData = importedSave
+			run_startup()
+			document.getElementById("importexporttext").innerHTML = "Imported Save File"
+		} else {
+			//gameData = tempGameData
+			document.getElementById("importexporttext").innerHTML = "Invalid Save File"
+		}
+	}
+}
+
+function run_startup() {
 	//check every variable in gameData for definition and initialize if missing
 	checkSaveFile()
 
@@ -1343,6 +1490,20 @@ if (savegame !== null) {
 		document.getElementById("superGemsOwned").style.display = "none"
 		document.getElementById("superGemPipe").style.display = "none"
 	}
+}
+
+//save data stuff
+var saveGameLoop = window.setInterval(function() {
+	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
+	console.log('saving...')
+}, 15000)
+
+//load data stuff
+var savegame = JSON.parse(localStorage.getItem('gachaIncrementalSave'))
+console.log(savegame)
+if (savegame !== null) {
+	gameData = savegame
+	run_startup()
 } else {
 	document.getElementById("theDungeon").style.display = "none"
 	document.getElementById("enemyStats").style.display = "none"
@@ -1366,3 +1527,5 @@ document.getElementById("charStats").style.display = "none"
 document.getElementById("newbieBanner").style.display = "inline-block"
 document.getElementById("standardBanner").style.display = "none"
 document.getElementById("improvementBanner").style.display = "none"
+
+document.getElementById("truehardreset").style.display = "none"
