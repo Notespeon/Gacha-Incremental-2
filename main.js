@@ -27,7 +27,11 @@ var gameData = {
 	autoDungeon: false,
 	autoDungeonDelay: 0,
 	autoClaim: false,
-	prestigeCount: 0
+	prestigeCount: 0,
+	/*qolTicket: 0,
+	permAutoDungeon: false,
+	permAutoClaim: false,
+	permFastTrainer: false*/
 }
 
 class Hero {
@@ -1120,7 +1124,11 @@ function prestigeGame() {
 		autoDungeon: false,
 		autoDungeonDelay: 0,
 		autoClaim: false,
-		prestigeCount: newPrestigeCount
+		prestigeCount: newPrestigeCount,
+		/*qolTicket: 0,
+		permAutoDungeon: false,
+		permAutoClaim: false,
+		permFastTrainer: false*/
 	}
 
 	soft_reset()
@@ -1184,15 +1192,17 @@ function updateGems() {
 
 function updateGold() {
 	document.getElementById("goldOwned").innerHTML = formatValue(gameData.gold) + " Gold"
-	if (document.getElementById("heroTrain").style.display != "none") {
-		if (document.getElementById("selectedStat").innerHTML == "Hitpoints") {
-			trainHeroDisplay("hp")
-		} else if (document.getElementById("selectedStat").innerHTML == "Attack") {
-			trainHeroDisplay("atk")
-		} else if (document.getElementById("selectedStat").innerHTML == "Defence") {
-			trainHeroDisplay("def")
-		} else if (document.getElementById("selectedStat").innerHTML == "Resistance") {
-			trainHeroDisplay("res")
+	if (gameData.displayed_hero != null) {
+		if (document.getElementById("heroTrain").style.display != "none") {
+			if (document.getElementById("selectedStat").innerHTML == "Hitpoints") {
+				trainHeroDisplay("hp")
+			} else if (document.getElementById("selectedStat").innerHTML == "Attack") {
+				trainHeroDisplay("atk")
+			} else if (document.getElementById("selectedStat").innerHTML == "Defence") {
+				trainHeroDisplay("def")
+			} else if (document.getElementById("selectedStat").innerHTML == "Resistance") {
+				trainHeroDisplay("res")
+			}
 		}
 	}
 	document.getElementById("rankUp").style.display = "none"
@@ -1470,7 +1480,11 @@ function hard_reset() {
 		autoDungeon: false,
 		autoDungeonDelay: 0,
 		autoClaim: false,
-		prestigeCount: 0
+		prestigeCount: 0,
+		/*qolTicket: 0,
+		permAutoDungeon: false,
+		permAutoClaim: false,
+		permFastTrainer: false*/
 	}
 	localStorage.setItem('gachaIncrementalSave', JSON.stringify(gameData))
 	
@@ -1580,6 +1594,18 @@ function checkSaveFile() {
 	if (typeof gameData.prestigeCount === 'undefined') {
 		gameData.prestigeCount = 0
 	}
+	/*if (typeof gameData.qolTicket === 'undefined') {
+		gameData.qolTicket = 0
+	}
+	if (typeof gameData.permAutoDungeon === 'undefined') {
+		gameData.permAutoDungeon = false
+	}
+	if (typeof gameData.permAutoClaim === 'undefined') {
+		gameData.permAutoClaim = false
+	}
+	if (typeof gameData.permFastTrainer === 'undefined') {
+		gameData.permFastTrainer = false
+	}*/
 }
 
 function checkImportedSaveFile(importedSave) {
@@ -1676,6 +1702,14 @@ function checkImportedSaveFile(importedSave) {
 	if (typeof importedSave.prestigeCount === 'undefined') {
 		return false
 	}
+	/*if (typeof importedSave.qolTicket === 'undefined') {
+		return false
+	}*/
+
+	/*qolTicket: 0,
+	permAutoDungeon: false,
+	permAutoClaim: false,
+	permFastTrainer: false*/
 
 	return true
 }
