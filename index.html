@@ -36,8 +36,21 @@
 			<p></p>
 			<button id="dailyRewardButton" onclick="grabDaily()" disabled>Collect Login Reward</button>
 			<button id="autoClaimButton" onclick="autoClaimDaily()" disabled>Auto</button>
-			<p id="dailyRewardText"></p>
 			<div id="dailyCalendarDiv"></div>
+			<div class="minheight">
+				<p id="dailyGoldRewardText"></p>
+				<p id="dailyDungeonRewardText"></p>
+				<p id="dailyTicketRewardText"></p>
+				<p id="dailyGemRewardText"></p>
+			</div>
+			<div id="dailyLevelMilestones">
+				<p id="dailyLevel1">Level 1: Daily Login Rewards</p>
+				<p id="dailyLevel2">Level 2: Gold and Dungeon Tickets Every Day</p>
+				<p id="dailyLevel3">Level 3: New Reward: Auto Dungeon Tickets</p>
+				<p id="dailyLevel4">Level 4: New Reward: Auto Claim Tickets</p>
+				<p id="dailyLevel5">Level 5: New Reward: Fast Training Tickets</p>
+				<p id="dailyLevel10">Level 10: Increased Monthly Gem Bonus</p>
+			</div>
 		</div>
 		<div id="theDungeonMenu">
 			<div class="aligned">
@@ -128,7 +141,7 @@
 				<button class="banner bannerButton nextButton" id="nextBanner2" onClick="changeBanner(2)" disabled>Next Banner</button>
 			</div>
 			<div id="improvementBanner">
-				<p class="banner" id="bannerText">Improvement Banner ('Daily Improvements' not yet implemented)</p>
+				<p class="banner" id="bannerText">Improvement Banner</p>
 				<img src="scuffed_assets/SlateBackground.png" class="background" alt="Black Background">
 				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerleft bannertop" alt="AUTO Dungeon">
 				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerright bannertop" alt="AUTO Dungeon">
@@ -197,6 +210,7 @@
 					<p id="statChange">Increase: +10 Hitpoints</p>
 					<button id="trainStat" onclick="trainHero('hp')" disabled>Train</button>
 					<button id="fasttrainStat" onclick="fastTrainHero('hp')" disabled>Train x10</button>
+					<p id="trainCap"></p>
 				</div>
 				<div id="rankUp">
 					<p class="header" id="rankUpHeader">Rank Up</p>
@@ -204,6 +218,9 @@
 					<p id="dupeCost">0/1 Duplicates</p>
 					<p id="unlimitCost">0/1 UN-LIMITERS</p>
 					<button id="rankUpConfirm" onclick="rankUpHero()" disabled>Rank Up!</button>
+				</div>
+				<div>
+					<p id="giveExpText"></p>
 				</div>
 			</div>
 		</div>
@@ -220,7 +237,7 @@
 		</div>
 		<div id="settingsMenu">
 			<p></p>
-			<p>Version: v0.12</p>
+			<p>Version: v0.13</p>
 			<p></p>
 			<p id="importexporttext"></p>
 			<p></p>

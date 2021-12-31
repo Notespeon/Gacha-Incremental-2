@@ -391,3 +391,15 @@ progress:after {
 .red {
   color: red;
 }
+
+.green {
+  color:#4CAF50;
+}
+
+.white {
+  color: whitesmoke;
+}
+
+.minheight {
+  height: 8rem
+}
