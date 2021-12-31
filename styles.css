@@ -146,9 +146,9 @@ th {
 }
 
 .dailyCalendar {
-  padding: 10px 0;
-  background: #555;
-  margin: 0;
+  padding: 1rem 0 1rem 1rem;
+  background: slategray;
+  margin-top: 1rem;
   box-sizing: border-box;
 }
 
@@ -157,13 +157,13 @@ th {
   display: inline-block;
   width: 13.6%;
   text-align: center;
-  margin-bottom: 5px;
+  margin-bottom: 0.5rem;
   font-size:12px;
   color: whitesmoke;
 }
 
 .dailyCalendar li .active {
-  padding: 5px;
+  padding: 0.5rem;
   background: #4CAF50 !important;
   color: whitesmoke !important
 }
@@ -218,11 +218,33 @@ th {
   top: 23rem;
 }
 
+.bannerButton2 {
+  float: right;
+  margin-right: 17.5px;
+  font-size: 15px;
+  top: 25rem;
+  left: 13rem;
+}
+
+.bannerMilestones {
+  float: right;
+  top: 29rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background-color: slategray
+}
+
+#dailyLevelMilestones {
+  background-color: slategray;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 #bannerReward {
   float: right;
 	margin-right: 17.5px;
 	font-size: 15px;
-	top: 24rem;
+	top: 26rem;
 	left: 1rem;
 }
 

@@ -20,6 +20,7 @@
 			<a id="bannermenu" onclick="tab('pullBannerMenu')" href=#Shop>Shop</a>
 			<a id="dungeonmenu" onclick="tab('theDungeonMenu')" href=#Dungeon>Dungeon</a>
 			<a id="collect" onclick="tab('charCollection')" href=#Collection>Collection</a>
+			<a id="currency" onclick="tab('currencyCollection')" href=#Currency>Currency</a>
 			<a id="prestige" onclick="tab('prestigeMenu')" href=#Prestige>Prestige</a>
 			<a id="settings" onclick="tab('settingsMenu')" href="#Settings">Settings</a>
 			<p id="superGemsOwned" class="resource">0 S-Gems</p>
@@ -139,6 +140,12 @@
 				<button class="banner bannerButton prevButton" id="prevBanner2" onClick="changeBanner(0)" disabled>Previous Banner</button>
 				<button class="banner bannerButton" id="pullOnBanner2" onClick="pullBanner(1)" disabled>10 Gems</button>
 				<button class="banner bannerButton nextButton" id="nextBanner2" onClick="changeBanner(2)" disabled>Next Banner</button>
+				<button class="banner bannerButton2" id="milestonesButton1" onClick="showBannerMilestones(1)">Banner Milestones</button>
+				<div class="banner bannerMilestones" id="bannerMilestones1">
+					<p id="banner1PullCount">You have pulled from the Standard Banner 0 times</p>
+					<p id="banner1MilestoneLevel10">100 Pulls: New Hero on Banner! (Not yet implemented)</p>
+					<p id="banner1MilestoneLevel20">200 Pulls: New Hero on Banner! (Not yet implemented)</p>
+				</div>
 			</div>
 			<div id="improvementBanner">
 				<p class="banner" id="bannerText">Improvement Banner</p>
@@ -157,6 +164,17 @@
 				<button class="banner bannerButton prevButton" id="prevBanner3" onClick="changeBanner(1)" disabled>Previous Banner</button>
 				<button class="banner bannerButton" id="pullOnBanner3" onClick="pullBanner(2)" disabled>10 Gems</button>
 				<button class="banner bannerButton nextButton" id="nextBanner3" onClick="changeBanner(3)" disabled>Next Banner</button>
+				<button class="banner bannerButton2" id="milestonesButton2" onClick="showBannerMilestones(2)">Banner Milestones</button>
+				<div class="banner bannerMilestones" id="bannerMilestones2">
+					<p id="banner2PullCount">You have pulled from the Improvement Banner 0 times</p>
+					<p id="banner2MilestoneLevel5">50 Pulls: Permanent Daily Level 2</p>
+					<p id="banner2MilestoneLevel10">100 Pulls: 1 Free QoL Ticket! (Currency Tab)</p>
+					<p id="banner2MilestoneLevel15">150 Pulls: Permanent Daily Level 3</p>
+					<p id="banner2MilestoneLevel20">200 Pulls: Permanent Daily Level 4</p>
+					<p id="banner2MilestoneLevel25">250 Pulls: Permanent Daily Level 5</p>
+					<p id="banner2MilestoneLevel30">300 Pulls: 1 Free QoL Ticket! (Currency Tab)</p>
+					<p id="banner2MilestoneLevel60">600 Pulls: 1 Free QoL Ticket! (Currency Tab)</p>
+				</div>
 			</div>
 			<p class="banner" id="bannerReward"></p>
 		</div>
@@ -224,6 +242,8 @@
 				</div>
 			</div>
 		</div>
+		<div id="currencyCollection">
+		</div>
 		<div id="prestigeMenu">
 			<p></p>
 			<p id="superGemCount">You currently have 0 Super Gems</p>
@@ -237,7 +257,7 @@
 		</div>
 		<div id="settingsMenu">
 			<p></p>
-			<p>Version: v0.13</p>
+			<p>Version: v0.14</p>
 			<p></p>
 			<p id="importexporttext"></p>
 			<p></p>

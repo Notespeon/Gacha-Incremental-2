@@ -100,6 +100,22 @@ function updateHeroStats(hero) {
 	}
 }
 
+function checkPullMilestoneLevel(id) {
+	level = gameData.pullCounts[id]
+
+	for (var i = 0; i < 11; i++) {
+		let milestoneElement = document.getElementById("banner" + id + "MilestoneLevel" + (i*5))
+		if (typeof(milestoneElement) != 'undefined' && milestoneElement != null) {
+			if (level >= i*50) {
+				milestoneElement.className = "green"
+			} else {
+				milestoneElement.className = "white"
+			}
+			
+		}
+	}
+}
+
 function checkDailyRewardLevel() {
 	level = gameData.dailyLevel
 
@@ -172,7 +188,18 @@ function showHeroStats(id) {
 	document.getElementById("display_description").innerHTML = hero.description
 
 	document.getElementById("charStats").style.display = "inline-block"
-	document.getElementById("heroTrain").style.display = "none"
+	if (document.getElementById("heroTrain").style.display != "none") {
+		if (document.getElementById("selectedStat").innerHTML == "Hitpoints") {
+			trainHeroDisplay("hp")
+		} else if (document.getElementById("selectedStat").innerHTML == "Attack") {
+			trainHeroDisplay("atk")
+		} else if (document.getElementById("selectedStat").innerHTML == "Defence") {
+			trainHeroDisplay("def")
+		} else if (document.getElementById("selectedStat").innerHTML == "Resistance") {
+			trainHeroDisplay("res")
+		}
+	}
+
 	document.getElementById("rankUp").style.display = "none"
 }
 
@@ -273,13 +300,13 @@ function trainHeroDisplay(stat) {
 	document.getElementById("trainCap").innerHTML = ""
 	if (stat == 'hp') {
 		document.getElementById("selectedStat").innerHTML = "Hitpoints"
-		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
+		document.getElementById("statCost").innerHTML = "Cost: " + (100*(5**Math.floor(hero.hpupgradelevel/50))) + " Gold"
 		document.getElementById("statChange").innerHTML = "Increase: +" + formatValue(hero.basehp * hero.level * (2**hero.rank)) + " Hitpoints"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('hp')")
 		document.getElementById("fasttrainStat").setAttribute('onclick', "fastTrainHero('hp')")
 
 		//enable button if conditions are met
-		if (gameData.gold >= 100 && hero.hpupgradelevel < (hero.level*5 * (2**hero.rank))) {
+		if (gameData.gold >= (100*(5**Math.floor(hero.hpupgradelevel/50))) && hero.hpupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
 			if (gameData.fastTrainer > 0) {
 				document.getElementById("fasttrainStat").disabled = false
@@ -293,13 +320,13 @@ function trainHeroDisplay(stat) {
 	}
 	if (stat == 'atk') {
 		document.getElementById("selectedStat").innerHTML = "Attack"
-		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
+		document.getElementById("statCost").innerHTML = "Cost: " + (100*(5**Math.floor(hero.atkupgradelevel/50))) + " Gold"
 		document.getElementById("statChange").innerHTML = "Increase: +" + formatValue(hero.baseatk * hero.level * (2**hero.rank)) + " Attack"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('atk')")
 		document.getElementById("fasttrainStat").setAttribute('onclick', "fastTrainHero('atk')")
 
 		//enable button if conditions are met
-		if (gameData.gold >= 100 && hero.atkupgradelevel < (hero.level*5 * (2**hero.rank))) {
+		if (gameData.gold >= (100*(5**Math.floor(hero.atkupgradelevel/50))) && hero.atkupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
 			if (gameData.fastTrainer > 0) {
 				document.getElementById("fasttrainStat").disabled = false
@@ -313,13 +340,13 @@ function trainHeroDisplay(stat) {
 	}
 	if (stat == 'def') {
 		document.getElementById("selectedStat").innerHTML = "Defence"
-		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
+		document.getElementById("statCost").innerHTML = "Cost: " + (100*(5**Math.floor(hero.defupgradelevel/50))) + " Gold"
 		document.getElementById("statChange").innerHTML = "Increase: +" + formatValue(hero.basedef * hero.level * (2**hero.rank)) + " Defence"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('def')")
 		document.getElementById("fasttrainStat").setAttribute('onclick', "fastTrainHero('def')")
 
 		//enable button if conditions are met
-		if (gameData.gold >= 100 && hero.defupgradelevel < (hero.level*5 * (2**hero.rank))) {
+		if (gameData.gold >= (100*(5**Math.floor(hero.defupgradelevel/50))) && hero.defupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
 			if (gameData.fastTrainer > 0) {
 				document.getElementById("fasttrainStat").disabled = false
@@ -333,13 +360,13 @@ function trainHeroDisplay(stat) {
 	}
 	if (stat == 'res') {
 		document.getElementById("selectedStat").innerHTML = "Resistance"
-		document.getElementById("statCost").innerHTML = "Cost: 100 Gold"
+		document.getElementById("statCost").innerHTML = "Cost: " + (100*(5**Math.floor(hero.resupgradelevel/50))) + " Gold"
 		document.getElementById("statChange").innerHTML = "Increase: +" + formatValue(hero.baseres * hero.level * (2**hero.rank)) + " Resistance"
 		document.getElementById("trainStat").setAttribute('onclick', "trainHero('res')")
 		document.getElementById("fasttrainStat").setAttribute('onclick', "fastTrainHero('res')")
 
 		//enable button if conditions are met
-		if (gameData.gold >= 100 && hero.resupgradelevel < (hero.level*5 * (2**hero.rank))) {
+		if (gameData.gold >= (100*(5**Math.floor(hero.resupgradelevel/50))) && hero.resupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
 			if (gameData.fastTrainer > 0) {
 				document.getElementById("fasttrainStat").disabled = false
@@ -396,30 +423,36 @@ function trainHero(stat) {
 	let id = gameData.displayed_hero
 	let hero = gameData.owned_heros[id]
 
-	if (gameData.gold >= 100) {
-		if (stat == 'hp') {
+	if (stat == 'hp') {
+		if (gameData.gold >= (100*(5**Math.floor(hero.hpupgradelevel/50)))) {
 			if (hero.hpupgradelevel < (hero.level*5 * (2**hero.rank))) {
 				hero.hpupgradelevel += 1
-				gameData.gold -= 100
+				gameData.gold -= (100*(5**Math.floor(hero.hpupgradelevel/50)))
 				updateHealth()
 			}
 		}
-		if (stat == 'atk') {
+	}
+	if (stat == 'atk') {
+		if (gameData.gold >= (100*(5**Math.floor(hero.atkupgradelevel/50)))) {
 			if (hero.atkupgradelevel < (hero.level*5 * (2**hero.rank))) {
 				hero.atkupgradelevel += 1
-				gameData.gold -= 100
+				gameData.gold -= (100*(5**Math.floor(hero.atkupgradelevel/50)))
 			}
 		}
-		if (stat == 'def') {
+	}
+	if (stat == 'def') {
+		if (gameData.gold >= (100*(5**Math.floor(hero.defupgradelevel/50)))) {
 			if (hero.defupgradelevel < (hero.level*5 * (2**hero.rank))) {
 				hero.defupgradelevel += 1
-				gameData.gold -= 100
+				gameData.gold -= (100*(5**Math.floor(hero.defupgradelevel/50)))
 			}
 		}
-		if (stat == 'res') {
+	}
+	if (stat == 'res') {
+		if (gameData.gold >= (100*(5**Math.floor(hero.resupgradelevel/50)))) {
 			if (hero.resupgradelevel < (hero.level*5 * (2**hero.rank))) {
 				hero.resupgradelevel += 1
-				gameData.gold -= 100
+				gameData.gold -= (100*(5**Math.floor(hero.resupgradelevel/50)))
 			}
 		}
 	}
@@ -429,6 +462,74 @@ function trainHero(stat) {
 
 	//update train button
 	trainHeroDisplay(stat)
+}
+
+function generateCurrencyElement(name, value) {
+	let currency = document.createElement('p')
+	currency.innerHTML = "You have " + value + " " + name
+	return currency
+}
+
+function generateCurrencyElement2(name, value) {
+	let currency = document.createElement('p')
+	currency.innerHTML = "You have " + name + " " + value
+	return currency
+}
+
+function generateCurrencyElement3(name, value) {
+	let currency = document.createElement('p')
+	currency.innerHTML = "You have " + name + " " + value + " times"
+	return currency
+}
+
+function generateDupeHeroString(name, value) {
+	let currency = document.createElement('p')
+	currency.innerHTML = "You have "
+	for (var i = 0; i < value.length; i++) {
+		currency.innerHTML += value[i]
+		if ((i < value.length - 1) && value.length > 1) {
+			currency.innerHTML += ", "
+		} 
+	}
+	currency.innerHTML += " " + name
+	return currency
+}
+
+function updateCurrencyPage() {
+	//set the div as the parent
+	let parent = document.getElementById('currencyCollection')
+
+	//clear all elements
+	while (parent.firstChild) {
+		parent.firstChild.remove()
+	}
+
+	//add a p as a buffer
+	parent.appendChild(document.createElement('p'))
+
+	//place each currency
+	parent.appendChild(generateCurrencyElement("Gold", gameData.gold))
+	parent.appendChild(generateCurrencyElement("Gems", gameData.gems))
+	if (gameData.prestigeCount > 0) {
+		parent.appendChild(generateCurrencyElement("S-Gems", gameData.superGems))
+		parent.appendChild(generateCurrencyElement("Total S-Gems", gameData.bestSuperGems))
+	}
+	parent.appendChild(generateCurrencyElement("Dungeon Tickets", gameData.dungeonTickets))
+	parent.appendChild(generateCurrencyElement("Auto Dungeon Tickets", gameData.autoDungeonTickets))
+	parent.appendChild(generateCurrencyElement("Auto Claim Tickets", gameData.autoDailyClaim))
+	parent.appendChild(generateCurrencyElement("Fast Training Tickets", gameData.fastTrainer))
+	parent.appendChild(generateCurrencyElement("UN-LIMITERS", gameData.unLimiter))
+	parent.appendChild(generateCurrencyElement("Bottled EXP", gameData.bottledExp))
+	parent.appendChild(generateDupeHeroString("Duplicate Heros", gameData.duplicate_heros))
+	//parent.appendChild(generateCurrencyElement(name, value))
+	parent.appendChild(document.createElement('p'))
+	parent.appendChild(generateCurrencyElement2("Daily Level", gameData.dailyLevel))
+	parent.appendChild(generateCurrencyElement2("Cleared Dungeon Level", gameData.bestEnemysDefeated))
+	parent.appendChild(generateCurrencyElement3("Pulled on the Standard Banner", gameData.pullCounts[1]))
+	parent.appendChild(generateCurrencyElement3("Pulled on the Improvement Banner", gameData.pullCounts[2]))
+	if (gameData.prestigeCount > 0) {
+		parent.appendChild(generateCurrencyElement3("Prestiged", gameData.prestigeCount))
+	}
 }
 
 function genCalendar() {
@@ -469,6 +570,7 @@ function tab(tab) {
 	document.getElementById("theDungeonMenu").style.display = "none"
 	document.getElementById("settingsMenu").style.display = "none"
 	document.getElementById("prestigeMenu").style.display = "none"
+	document.getElementById("currencyCollection").style.display = "none"
 
 	document.getElementById("bannermenu").className = "inactive"
 	document.getElementById("dailymenu").className = "inactive"
@@ -476,10 +578,11 @@ function tab(tab) {
 	document.getElementById("dungeonmenu").className = "inactive"
 	document.getElementById("settings").className = "inactive"
 	document.getElementById("prestige").className = "inactive"
+	document.getElementById("currency").className = "inactive"
 
 	document.getElementById(tab).style.display = "inline-block"
 
-	if(tab == "charCollection") {
+	if (tab == "charCollection") {
 		document.getElementById("collect").className = "active"
 	} else if (tab == "pullBannerMenu") {
 		document.getElementById("bannermenu").className = "active"
@@ -491,6 +594,9 @@ function tab(tab) {
 		document.getElementById("settings").className = "active"
 	} else if (tab == "prestigeMenu") {
 		document.getElementById("prestige").className = "active"
+	} else if (tab == "currencyCollection") {
+		updateCurrencyPage()
+		document.getElementById("currency").className = "active"
 	}
 }
 
@@ -641,6 +747,8 @@ function battleDefeat() {
 		document.getElementById("prestige").style.display = "inline-block"
 		document.getElementById("superGemsOwned").style.display = "inline-block"
 		document.getElementById("superGemPipe").style.display = "inline-block"
+		document.getElementById("milestonesButton1").style.display = "inline-block"
+		document.getElementById("milestonesButton2").style.display = "inline-block"
 		updateSuperGems()
 	}
 
@@ -657,7 +765,7 @@ function battleDefeat() {
 function battleTick(squad, enemy) {
 	enemy.currenthp -= Math.max(0, 2*squad[0] - enemy.defence)
 
-	if(enemy.style == 'defence') {
+	if (enemy.style == 'defence') {
 		gameData.squad_hp -= Math.max(0, 2*enemy.attack - squad[1])
 	} else {
 		gameData.squad_hp -= Math.max(0, 2*enemy.attack - squad[2])
@@ -972,6 +1080,16 @@ function prestigeGame() {
 
 	let oldPullCounts = gameData.pullCounts
 
+	let newDailyLevel = 1
+
+	if (gameData.pullCounts[2] >= 150) {
+		newDailyLevel = floor(gameData.pullCounts[2]/50)
+	} else if (gameData.pullCounts[2] >= 50) {
+		newDailyLevel = 2
+	} else {
+		newDailyLevel = 1
+	}
+
 	//reset everything
 	gameData = {
 		gold: 100,
@@ -983,7 +1101,7 @@ function prestigeGame() {
 		autoDungeonTickets: 0, 
 		autoDailyClaim: 0,
 		unLimiter: 0,
-		dailyLevel: 1,
+		dailyLevel: newDailyLevel,
 		fastTrainer: 0,
 		bottledExp: 0,
 		owned_heros: [],
@@ -1014,12 +1132,29 @@ function updateGems() {
 	if (gameData.pullCounts[0] != 0) {
 		document.getElementById("nextBanner1").disabled = false
 		document.getElementById("prevBanner2").disabled = false
+		document.getElementById("banner1PullCount").innerHTML = "You have pulled from the Standard Banner " + formatValue(gameData.pullCounts[1]) + " times"
+		checkPullMilestoneLevel(1)
 	}
 
 	//unlock third banner
 	if (gameData.bestEnemysDefeated >= 5 || gameData.prestigeCount > 0) {
 		document.getElementById("nextBanner2").disabled = false
 		document.getElementById("prevBanner3").disabled = false
+		document.getElementById("banner2PullCount").innerHTML = "You have pulled from the Improvement Banner " + formatValue(gameData.pullCounts[2]) + " times"
+		checkPullMilestoneLevel(2)
+	
+		let newDailyLevel = 1
+		if (gameData.pullCounts[2] >= 150) {
+			newDailyLevel = floor(gameData.pullCounts[2]/50)
+		} else if (gameData.pullCounts[2] >= 50) {
+			newDailyLevel = 2
+		} else {
+			newDailyLevel = 1
+		}
+
+		if (newDailyLevel > gameData.dailyLevel) {
+			gameData.dailyLevel = newDailyLevel
+		}
 	}
 
 	//enable newbie banner
@@ -1049,7 +1184,17 @@ function updateGems() {
 
 function updateGold() {
 	document.getElementById("goldOwned").innerHTML = formatValue(gameData.gold) + " Gold"
-	document.getElementById("heroTrain").style.display = "none"
+	if (document.getElementById("heroTrain").style.display != "none") {
+		if (document.getElementById("selectedStat").innerHTML == "Hitpoints") {
+			trainHeroDisplay("hp")
+		} else if (document.getElementById("selectedStat").innerHTML == "Attack") {
+			trainHeroDisplay("atk")
+		} else if (document.getElementById("selectedStat").innerHTML == "Defence") {
+			trainHeroDisplay("def")
+		} else if (document.getElementById("selectedStat").innerHTML == "Resistance") {
+			trainHeroDisplay("res")
+		}
+	}
 	document.getElementById("rankUp").style.display = "none"
 }
 
@@ -1100,6 +1245,15 @@ function checkIfDuplicate(hero) {
 	return false
 }
 
+function showBannerMilestones(id) {
+	milestones = document.getElementById("bannerMilestones"+id)
+	if (milestones.style.display == "inline-block") {
+		milestones.style.display = "none"
+	} else {
+		milestones.style.display = "inline-block"
+	}
+}
+
 function checkWhereDuplicate(hero) {
 	for (var i = 0; i < gameData.owned_heros.length; i++) {
 		if (hero.id == gameData.owned_heros[i].id) {
@@ -1147,8 +1301,8 @@ function summon0star() {
 }
 
 function pullBanner(id) {
-	if(id == 0) {
-		if(gameData.gems >= 1) {
+	if (id == 0) {
+		if (gameData.gems >= 1) {
 			gameData.gems -= 1
 			gameData.pullCounts[id] += 1
 			updateGems()
@@ -1158,7 +1312,7 @@ function pullBanner(id) {
 			document.getElementById("standardBanner").style.display = "inline-block"
 		}
 	} else if (id == 1) {
-		if(gameData.gems >= 10) {
+		if (gameData.gems >= 10) {
 			gameData.gems -= 10
 			gameData.pullCounts[id] += 1
 			updateGems()
@@ -1174,7 +1328,7 @@ function pullBanner(id) {
 			}
 		}
 	} else if (id == 2) {
-		if(gameData.gems >= 10) {
+		if (gameData.gems >= 10) {
 			gameData.gems -= 10
 			gameData.pullCounts[id] += 1
 			updateGems()
@@ -1214,6 +1368,7 @@ function pullBanner(id) {
 			document.getElementById("fasttrainStat").style.display = "inline-block"
 			document.getElementById("giveexp").style.display = "inline-block"
 			document.getElementById("dailyLevelMilestones").style.display = "inline-block"
+			document.getElementById("currency").style.display = "inline-block"
 		}
 	}
 }
@@ -1237,12 +1392,14 @@ function soft_reset() {
 		document.getElementById("fasttrainStat").style.display = "inline-block"
 		document.getElementById("giveexp").style.display = "inline-block"
 		document.getElementById("dailyLevelMilestones").style.display = "inline-block"
+		document.getElementById("currency").style.display = "inline-block"
 	} else {
 		document.getElementById("autoClaimButton").style.display = "none"
 		document.getElementById("autoDungeonButton").style.display = "none"
 		document.getElementById("fasttrainStat").style.display = "none"
 		document.getElementById("giveexp").style.display = "none"
 		document.getElementById("dailyLevelMilestones").style.display = "none"
+		document.getElementById("currency").style.display = "none"
 	}
 	document.getElementById("autoClaimButton").disabled = true
 	document.getElementById("autoDungeonButton").disabled = true
@@ -1324,6 +1481,8 @@ function hard_reset() {
 	document.getElementById("prestige").style.display = "none"
 	document.getElementById("superGemsOwned").style.display = "none"
 	document.getElementById("superGemPipe").style.display = "none"
+	document.getElementById("milestonesButton1").style.display = "none"
+	document.getElementById("milestonesButton2").style.display = "none"
 }
 
 //stops new versions from breaking old saves
@@ -1585,12 +1744,14 @@ function run_startup() {
 		document.getElementById("fasttrainStat").style.display = "inline-block"
 		document.getElementById("giveexp").style.display = "inline-block"
 		document.getElementById("dailyLevelMilestones").style.display = "inline-block"
+		document.getElementById("currency").style.display = "inline-block"
 	} else {
 		document.getElementById("autoClaimButton").style.display = "none"
 		document.getElementById("autoDungeonButton").style.display = "none"
 		document.getElementById("fasttrainStat").style.display = "none"
 		document.getElementById("giveexp").style.display = "none"
 		document.getElementById("dailyLevelMilestones").style.display = "none"
+		document.getElementById("currency").style.display = "none"
 	}
 
 	if (gameData.autoDungeon) {
@@ -1615,16 +1776,20 @@ function run_startup() {
 		document.getElementById("enemyStats").style.display = "none"
 	}
 
-	//only display prestige if unlocked
+	//only display prestige content if unlocked
 	if (gameData.bestEnemysDefeated >= 10 || gameData.prestigeCount > 0) {
 		document.getElementById("prestige").style.display = "inline-block"
 		document.getElementById("superGemsOwned").style.display = "inline-block"
 		document.getElementById("superGemPipe").style.display = "inline-block"
 		updateSuperGems()
+		document.getElementById("milestonesButton1").style.display = "inline-block"
+		document.getElementById("milestonesButton2").style.display = "inline-block"
 	} else {
 		document.getElementById("prestige").style.display = "none"
 		document.getElementById("superGemsOwned").style.display = "none"
 		document.getElementById("superGemPipe").style.display = "none"
+		document.getElementById("milestonesButton1").style.display = "none"
+		document.getElementById("milestonesButton2").style.display = "none"
 	}
 }
 
@@ -1652,6 +1817,10 @@ if (savegame !== null) {
 	document.getElementById("prestige").style.display = "none"
 	document.getElementById("superGemsOwned").style.display = "none"
 	document.getElementById("superGemPipe").style.display = "none"
+	document.getElementById("dailyLevelMilestones").style.display = "none"
+	document.getElementById("milestonesButton1").style.display = "none"
+	document.getElementById("milestonesButton2").style.display = "none"
+	document.getElementById("currency").style.display = "none"
 }
 
 /* MAIN? */
@@ -1665,5 +1834,7 @@ document.getElementById("charStats").style.display = "none"
 document.getElementById("newbieBanner").style.display = "inline-block"
 document.getElementById("standardBanner").style.display = "none"
 document.getElementById("improvementBanner").style.display = "none"
+document.getElementById("bannerMilestones1").style.display = "none"
+document.getElementById("bannerMilestones2").style.display = "none"
 
 document.getElementById("truehardreset").style.display = "none"
