@@ -14,269 +14,305 @@
 			gtag('config', 'G-ZKYVT1SF3P');
 		</script>
 	</head>
-	<body style="background-color:#555">
-		<div class="topnav" id="navigateButtons">
-			<a id="dailymenu" class="active" onclick="tab('colDailyMenu')" href=#Daily>Daily</a>
-			<a id="bannermenu" onclick="tab('pullBannerMenu')" href=#Shop>Shop</a>
-			<a id="dungeonmenu" onclick="tab('theDungeonMenu')" href=#Dungeon>Dungeon</a>
-			<a id="collect" onclick="tab('charCollection')" href=#Collection>Collection</a>
-			<a id="currency" onclick="tab('currencyCollection')" href=#Currency>Currency</a>
-			<a id="prestige" onclick="tab('prestigeMenu')" href=#Prestige>Prestige</a>
-			<a id="settings" onclick="tab('settingsMenu')" href="#Settings">Settings</a>
-			<p id="superGemsOwned" class="resource">0 S-Gems</p>
-			<p id="superGemPipe" class="clarityPipe resource">|</p>
-			<p id="gemsOwned" class="resource">0 Gems</p>
-			<p class="clarityPipe resource">|</p>
-			<p id="goldOwned" class="resource">0 Gold</p>
-			<p class="clarityPipe resource">|</p>
-			<p id="currentDay" class="resource">Day 1</p>
-		</div>
-		<div id="colDailyMenu">
-			<p></p>
-			<button onclick="incrementDay()">Go Next</button>
-			<p></p>
-			<button id="dailyRewardButton" onclick="grabDaily()" disabled>Collect Login Reward</button>
-			<button id="autoClaimButton" onclick="autoClaimDaily()" disabled>Auto</button>
-			<div id="dailyCalendarDiv"></div>
-			<div class="minheight">
-				<p id="dailySavedText"></p>
-				<p id="dailyGoldRewardText"></p>
-				<p id="dailyDungeonRewardText"></p>
-				<p id="dailyTicketRewardText"></p>
-				<p id="dailyGemRewardText"></p>
+	<body onload="runLoader()" style="background-color:#555">
+		<div id="loader"></div>
+		<div style="display:none;" id="contentDiv">
+			<div class="topnav" id="navigateButtons">
+				<a id="dailymenu" class="active" onclick="tab('colDailyMenu')" href=#Daily>Daily</a>
+				<a id="bannermenu" onclick="tab('pullBannerMenu')" href=#Shop>Shop</a>
+				<a id="dungeonmenu" onclick="tab('theDungeonMenu')" href=#Dungeon>Dungeon</a>
+				<a id="collect" onclick="tab('charCollection')" href=#Collection>Collection</a>
+				<a id="currency" onclick="tab('currencyCollection')" href=#Currency>Currency</a>
+				<a id="prestige" onclick="tab('prestigeMenu')" href=#Prestige>Prestige</a>
+				<a id="settings" onclick="tab('settingsMenu')" href="#Settings">Settings</a>
+				<p id="superGemsOwned" class="resource">0 S-Gems</p>
+				<p id="superGemPipe" class="clarityPipe resource">|</p>
+				<p id="gemsOwned" class="resource">0 Gems</p>
+				<p class="clarityPipe resource">|</p>
+				<p id="goldOwned" class="resource">0 Gold</p>
+				<p class="clarityPipe resource">|</p>
+				<p id="currentDay" class="resource">Day 1</p>
 			</div>
-			<div id="dailyLevelMilestones">
-				<p id="dailyLevel1">Level 1: Daily Login Rewards</p>
-				<p id="dailyLevel2">Level 2: Gold and Dungeon Tickets Every Day</p>
-				<p id="dailyLevel3">Level 3: New Reward: Auto Dungeon Tickets</p>
-				<p id="dailyLevel4">Level 4: New Reward: Auto Claim Tickets</p>
-				<p id="dailyLevel5">Level 5: New Reward: Fast Training Tickets</p>
-				<p id="dailyLevel10">Level 10: Increased Weekly Gem Bonus</p>
+			<div id="colDailyMenu">
+				<p></p>
+				<button onclick="incrementDay()">Go Next</button>
+				<p></p>
+				<button id="dailyRewardButton" onclick="grabDaily()" disabled>Collect Login Reward</button>
+				<button id="autoClaimButton" onclick="autoClaimDaily()" disabled>Auto</button>
+				<div id="dailyCalendarDiv"></div>
+				<div class="minheight">
+					<p id="dailySavedText"></p>
+					<p id="dailyGoldRewardText"></p>
+					<p id="dailyDungeonRewardText"></p>
+					<p id="dailyTicketRewardText"></p>
+					<p id="dailyGemRewardText"></p>
+				</div>
+				<div id="dailyLevelMilestones">
+					<p id="dailyLevel1">Level 1: Daily Login Rewards</p>
+					<p id="dailyLevel2">Level 2: Gold and Dungeon Tickets Every Day</p>
+					<p id="dailyLevel3">Level 3: New Reward: Auto Dungeon Tickets</p>
+					<p id="dailyLevel4">Level 4: New Reward: Auto Claim Tickets</p>
+					<p id="dailyLevel5">Level 5: New Reward: Fast Training Tickets</p>
+					<p id="dailyLevel10">Level 10: Increased Weekly Gem Bonus</p>
+				</div>
 			</div>
-		</div>
-		<div id="theDungeonMenu">
-			<div class="aligned">
-				<p></p>
-				<button id="enterDungeonButton" onclick="enterDungeon()">Use Ticket</button>
-				<button id="autoDungeonButton" onclick="autoDungeon()" disabled>Auto</button>
-				<p></p>
-				<p id="ticketCount">You have 0 Dungeon Tickets</p>
-				<p></p>
-				<p id="dungeonWarningMessage"></p>
-				<p></p>
-				<div id="theDungeon">
-					<div id="theDungeonImages">
-						<img src="scuffed_assets/SnowBackgroundNight.png" class="dgbackground" alt="Grey Background">
-						<img src="scuffed_assets/enemy_1.png" class="enemy" alt="Enemy Archer">
+			<div id="theDungeonMenu">
+				<div class="aligned">
+					<p></p>
+					<button id="enterDungeonButton" onclick="enterDungeon()">Use Ticket</button>
+					<button id="autoDungeonButton" onclick="autoDungeon()" disabled>Auto</button>
+					<p></p>
+					<p id="ticketCount">You have 0 Dungeon Tickets</p>
+					<p></p>
+					<p id="dungeonWarningMessage"></p>
+					<p></p>
+					<div id="theDungeon">
+						<div id="theDungeonImages">
+							<img src="scuffed_assets/SnowBackgroundNight.png" class="dgbackground" alt="Grey Background">
+							<img src="scuffed_assets/enemy_1.png" class="enemy" alt="Enemy Archer">
+						</div>
+						<progress id="squadhealth" value="100" max="100"></progress>
+						<progress id="enemyhealth" value="100" max="100"></progress>
+						<!--button id="attackButton" onclick="battleAttack()">Attack</button-->
 					</div>
-					<progress id="squadhealth" value="100" max="100"></progress>
-					<progress id="enemyhealth" value="100" max="100"></progress>
-					<!--button id="attackButton" onclick="battleAttack()">Attack</button-->
+					<div id="dungeonReward">
+						<p id="goldReward"></p>
+						<p id="xpReward"></p>
+						<p id="levelUpReward1"></p>
+						<p id="levelUpReward2"></p>
+						<p id="levelUpReward3"></p>
+						<p id="gemReward"></p>
+						<p class="bigyellowtext" id="specialReward"></p>
+						<p id="extraReward"></p>
+					</div>
 				</div>
-				<div id="dungeonReward">
-					<p id="goldReward"></p>
-					<p id="xpReward"></p>
-					<p id="levelUpReward1"></p>
-					<p id="levelUpReward2"></p>
-					<p id="levelUpReward3"></p>
-					<p id="gemReward"></p>
-					<p class="bigyellowtext" id="specialReward"></p>
-					<p id="extraReward"></p>
-				</div>
-			</div>
-			<div class="aligned" id="enemyStats">
-				<p></p>
-				<table>
-					<tr>
-						<th class="header">Name</th>
-						<th class="header">Element</th>
-						<th class="header">Level</th>
-						<th class="header">Hitpoints</th>
-						<th class="header">Attack</th>
-						<th class="header">Defence</th>
-						<th class="header">Style</th>
-						<th class="header">Description</th>
-					</tr>
-					<tr>
-						<th id="display_enemy_name"></th>
-						<th id="display_enemy_element"></th>
-						<th id="display_enemy_lvl"></th>
-						<th id="display_enemy_hp"></th>
-						<th id="display_enemy_atk"></th>
-						<th id="display_enemy_def"></th>
-						<th id="display_enemy_style"></th>
-						<th id="display_enemy_description"></th>
-					</tr>
-				</table>
-			</div>
-		</div>
-		<div id="pullBannerMenu">
-			<div id="newbieBanner">
-				<p class="banner" id="bannerText">NEW PLAYER BANNER (GUARANTEED 3 STAR HERO!)</p>
-				<img src="scuffed_assets/SnowBackground.png" class="background" alt="Blue Background">
-				<img src="scuffed_assets/archangel_female.png" class="banner bannerleft bannertop" alt="Female Archangel">
-				<img src="scuffed_assets/archangel_male.png" class="banner flip bannerright bannertop" alt="Male Archangel">
-				<img src="scuffed_assets/archdemon_female.png" class="banner bannerleft bannermiddle" alt="Female Archdemon">
-				<img src="scuffed_assets/archdemon_male.png" class="banner flip bannerright bannermiddle" alt="Male Archdemon">
-				<img src="scuffed_assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
-				<img src="scuffed_assets/paladin_male.png" class="banner flip bannerright bannerbottom" alt="Male Paladin">
-				<img src="scuffed_assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
-				<button class="banner bannerButton" id="pullOnBanner1" onClick="pullBanner(0)" disabled>1 Gem (Limited: 1 Pull)</button>
-				<button class="banner bannerButton nextButton" id="nextBanner1" onClick="changeBanner(1)" disabled>Next Banner</button>	
-			</div>
-			<div id="standardBanner">
-				<p class="banner" id="bannerText">Standard Banner</p>
-				<img src="scuffed_assets/SnowBackground.png" class="background" alt="Blue Background">
-				<img src="scuffed_assets/archangel_female.png" class="banner bannerleft bannertop" alt="Female Archangel">
-				<img src="scuffed_assets/archangel_male.png" class="banner flip bannerright bannertop" alt="Male Archangel">
-				<img src="scuffed_assets/archdemon_female.png" class="banner bannerleft bannermiddle" alt="Female Archdemon">
-				<img src="scuffed_assets/archdemon_male.png" class="banner flip bannerright bannermiddle" alt="Male Archdemon">
-				<img src="scuffed_assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
-				<img src="scuffed_assets/paladin_male.png" class="banner flip bannerright bannerbottom" alt="Male Paladin">
-				<img src="scuffed_assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
-				<img src="scuffed_assets/gold_banner.png" class="banner" id="decal2" alt="Gold Lump">
-				<img src="scuffed_assets/gold_banner.png" class="banner" id="decal3" alt="Gold Lump">
-				<img src="scuffed_assets/dungeon_ticket.png" class="banner" id="decal4" alt="Dungeon Ticket">
-				<img src="scuffed_assets/dungeon_ticket.png" class="banner" id="decal5" alt="Dungeon Ticket">
-				<button class="banner bannerButton prevButton" id="prevBanner2" onClick="changeBanner(0)" disabled>Previous Banner</button>
-				<button class="banner bannerButton" id="pullOnBanner2" onClick="pullBanner(1)" disabled>10 Gems</button>
-				<button class="banner bannerButton nextButton" id="nextBanner2" onClick="changeBanner(2)" disabled>Next Banner</button>
-				<button class="banner bannerButton2" id="milestonesButton1" onClick="showBannerMilestones(1)">Banner Milestones</button>
-				<div class="banner bannerMilestones" id="bannerMilestones1">
-					<p id="banner1PullCount">You have pulled from the Standard Banner 0 times</p>
-					<p id="banner1MilestoneLevel10">100 Pulls: New Hero on Banner! (Not yet implemented)</p>
-					<p id="banner1MilestoneLevel20">200 Pulls: New Hero on Banner! (Not yet implemented)</p>
-				</div>
-			</div>
-			<div id="improvementBanner">
-				<p class="banner" id="bannerText">Improvement Banner</p>
-				<img src="scuffed_assets/SlateBackground.png" class="background" alt="Black Background">
-				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerleft bannertop" alt="AUTO Dungeon">
-				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerright bannertop" alt="AUTO Dungeon">
-				<img src="scuffed_assets/fast_trainer.png" class="banner bannerleft bannermiddle" alt="Fast Trainer">
-				<img src="scuffed_assets/fast_trainer.png" class="banner bannerright bannermiddle" alt="Fast Trainer">
-				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerleft bannerbottom" alt="AUTO Claim">
-				<img src="scuffed_assets/auto_dungeon.png" class="banner bannerright bannerbottom" alt="AUTO Claim">
-				<img src="scuffed_assets/un_limiter.png" class="banner" id="decal1" alt="Unlimiter">
-				<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal2" alt="Bottled Experience">
-				<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal3" alt="Bottled Experience">
-				<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal4" alt="Bottled Experience">
-				<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal5" alt="Bottled Experience">
-				<button class="banner bannerButton prevButton" id="prevBanner3" onClick="changeBanner(1)" disabled>Previous Banner</button>
-				<button class="banner bannerButton" id="pullOnBanner3" onClick="pullBanner(2)" disabled>10 Gems</button>
-				<button class="banner bannerButton nextButton" id="nextBanner3" onClick="changeBanner(3)" disabled>Next Banner</button>
-				<button class="banner bannerButton2" id="milestonesButton2" onClick="showBannerMilestones(2)">Banner Milestones</button>
-				<div class="banner bannerMilestones" id="bannerMilestones2">
-					<p id="banner2PullCount">You have pulled from the Improvement Banner 0 times</p>
-					<p id="banner2MilestoneLevel5">50 Pulls: Permanent Daily Level 2</p>
-					<p id="banner2MilestoneLevel10">100 Pulls: 1 Super QoL Ticket!</p>
-					<p id="banner2MilestoneLevel15">150 Pulls: Permanent Daily Level 3</p>
-					<p id="banner2MilestoneLevel20">200 Pulls: Permanent Daily Level 4</p>
-					<p id="banner2MilestoneLevel25">250 Pulls: Permanent Daily Level 5</p>
-					<p id="banner2MilestoneLevel30">300 Pulls: 1 Super QoL Ticket!</p>
-					<p id="banner2MilestoneLevel50">500 Pulls: Permanent Daily Level 10</p>
-					<p id="banner2MilestoneLevel60">600 Pulls: 1 Super QoL Ticket!</p>
-				</div>
-			</div>
-			<p class="banner" id="bannerReward"></p>
-		</div>
-		<div id="charCollection">
-			<div id="charList">
-				<p></p>
-			</div>
-			<div id="charStats">
-				<div>
+				<div class="aligned" id="enemyStats">
 					<p></p>
 					<table>
 						<tr>
 							<th class="header">Name</th>
-							<th class="header">Stars</th>
 							<th class="header">Element</th>
-							<th class="header">Rank</th>
 							<th class="header">Level</th>
-							<th class="header">Experience</th>
 							<th class="header">Hitpoints</th>
 							<th class="header">Attack</th>
 							<th class="header">Defence</th>
-							<th class="header">Resistance</th>
+							<th class="header">Style</th>
 							<th class="header">Description</th>
 						</tr>
 						<tr>
-							<th id="display_name"></th>
-							<th id="display_stars"></th>
-							<th id="display_element"></th>
-							<th id="display_rank"></th>
-							<th id="display_lvl"></th>
-							<th id="display_xp"></th>
-							<th id="display_hp"></th>
-							<th id="display_atk"></th>
-							<th id="display_def"></th>
-							<th id="display_res"></th>
-							<th id="display_description"></th>
+							<th id="display_enemy_name"></th>
+							<th id="display_enemy_element"></th>
+							<th id="display_enemy_lvl"></th>
+							<th id="display_enemy_hp"></th>
+							<th id="display_enemy_atk"></th>
+							<th id="display_enemy_def"></th>
+							<th id="display_enemy_style"></th>
+							<th id="display_enemy_description"></th>
 						</tr>
 					</table>
-					<p></p>
-					<button id="selecthero" onclick="selectHero()">Select Hero (Max 3)</button>
-					<button id="trainhitpoints" onclick="trainHeroDisplay('hp')">Train Hitpoints</button>
-					<button id="trainattack" onclick="trainHeroDisplay('atk')">Train Attack</button>
-					<button id="traindefence" onclick="trainHeroDisplay('def')">Train Defence</button>
-					<button id="trainresistance" onclick="trainHeroDisplay('res')">Train Resistance</button>
-					<button id="rankupButton" onclick="rankUpDisplay()">Rank Up</button>
-					<button id="giveexp" onclick="giveHeroExp()" disabled>Give EXP</button>
-				</div>
-				<div id="heroTrain">
-					<p class="header" id="selectedStat">Hitpoints</p>
-					<p id="statCost">Cost: 10 Gold</p>
-					<p id="statChange">Increase: +10 Hitpoints</p>
-					<button id="trainStat" onclick="trainHero('hp')" disabled>Train</button>
-					<button id="fasttrainStat" onclick="fastTrainHero('hp')" disabled>Train x10</button>
-					<p id="trainCap"></p>
-				</div>
-				<div id="rankUp">
-					<p class="header" id="rankUpHeader">Rank Up</p>
-					<p id="rankUpLevelRequired">Level 1/10</p>
-					<p id="dupeCost">0/1 Duplicates</p>
-					<p id="unlimitCost">0/1 UN-LIMITERS</p>
-					<button id="rankUpConfirm" onclick="rankUpHero()" disabled>Rank Up!</button>
-				</div>
-				<div>
-					<p id="giveExpText"></p>
 				</div>
 			</div>
-		</div>
-		<div id="currencyCollection">
-		</div>
-		<div id="prestigeMenu">
-			<p></p>
-			<p id="superGemCount">You currently have 0 Super Gems</p>
-			<p id="bestSuperGemCount">Your best ever Super Gems is 0: Multiplying Gold and EXP Gained by 1</p>
-			<p>Reset all progress for a massive boost!</p>
-			<p id="futureSuperGemCount">Receive 0 Super Gems</p>
-			<p id="futureHeroSuperGems">0 Super Gems from hero levels past 10</p>
-			<p id="futureDungeonSuperGems">0 Super Gems from dungeon levels cleared past 10</p>
-			<p id="superGemDayMulti">1x Multiplier for prestiging on day 365</p>
-			<button id="prestigeConfirm" onclick="prestigeGame()" disabled>Prestige!</button>
-		</div>
-		<div id="settingsMenu">
-			<p></p>
-			<p id="versionText"></p>
-			<p></p>
-			<p id="importexporttext"></p>
-			<p></p>
-			<button onclick="import_save()">Import Save</button>
-			<input type="text" id="importbox">
-			<p></p>
-			<button onclick="export_save()">Export Save</button>
-			<input type="text" id="exportbox">
-			<p></p>
-			<button onclick="unlock_hard_reset()">HARD RESET</button>
-			<p></p>
-			<button id="truehardreset" class="red" onclick="hard_reset()" disabled>HARD RESET!!</button>
-			<p></p>
-			<p>Hotkeys:</p>
-			<p>N for Go Next</p>
-			<p>L for Collect Login Reward</p>
-			<p>U for Use Ticket</p>
+			<div id="pullBannerMenu">
+				<div id="newbieBanner">
+					<p class="banner bannerText">NEW PLAYER BANNER (GUARANTEED 3 STAR HERO!)</p>
+					<img src="scuffed_assets/SnowBackground.png" class="background" alt="Blue Background">
+					<img src="scuffed_assets/archangel_female.png" class="banner bannerleft bannertop" alt="Female Archangel">
+					<img src="scuffed_assets/archangel_male.png" class="banner flip bannerright bannertop" alt="Male Archangel">
+					<img src="scuffed_assets/archdemon_female.png" class="banner bannerleft bannermiddle" alt="Female Archdemon">
+					<img src="scuffed_assets/archdemon_male.png" class="banner flip bannerright bannermiddle" alt="Male Archdemon">
+					<img src="scuffed_assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
+					<img src="scuffed_assets/paladin_male.png" class="banner flip bannerright bannerbottom" alt="Male Paladin">
+					<img src="scuffed_assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
+					<button class="banner bannerButton" id="pullOnBanner1" onClick="pullBanner(0)" disabled>1 Gem (Limited: 1 Pull)</button>
+					<button class="banner bannerButton nextButton" id="nextBanner1" onClick="changeBanner(1)" disabled>Next Banner</button>	
+				</div>
+				<div id="standardBanner">
+					<p class="banner bannerText">Standard Banner</p>
+					<img src="scuffed_assets/SnowBackground.png" class="background" alt="Blue Background">
+					<img src="scuffed_assets/archangel_female.png" class="banner bannerleft bannertop" alt="Female Archangel">
+					<img src="scuffed_assets/archangel_male.png" class="banner flip bannerright bannertop" alt="Male Archangel">
+					<img src="scuffed_assets/archdemon_female.png" class="banner bannerleft bannermiddle" alt="Female Archdemon">
+					<img src="scuffed_assets/archdemon_male.png" class="banner flip bannerright bannermiddle" alt="Male Archdemon">
+					<img src="scuffed_assets/paladin_female.png" class="banner bannerleft bannerbottom" alt="Female Paladin">
+					<img src="scuffed_assets/paladin_male.png" class="banner flip bannerright bannerbottom" alt="Male Paladin">
+					<img src="scuffed_assets/protection_banner.png" class="banner" id="decal1" alt="Banner Icon 1">
+					<img src="scuffed_assets/gold_banner.png" class="banner" id="decal2" alt="Gold Lump">
+					<img src="scuffed_assets/gold_banner.png" class="banner" id="decal3" alt="Gold Lump">
+					<img src="scuffed_assets/dungeon_ticket.png" class="banner" id="decal4" alt="Dungeon Ticket">
+					<img src="scuffed_assets/dungeon_ticket.png" class="banner" id="decal5" alt="Dungeon Ticket">
+					<button class="banner bannerButton prevButton" id="prevBanner2" onClick="changeBanner(0)" disabled>Previous Banner</button>
+					<button class="banner bannerButton midButton" id="pullOnBanner2" onClick="pullBanner(1)" disabled>10 Gems</button>
+					<button class="banner bannerButton nextButton" id="nextBanner2" onClick="changeBanner(2)" disabled>Next Banner</button>
+					<button class="banner bannerButton2" id="milestonesButton1" onClick="showBannerMilestones(1)">Banner Milestones</button>
+					<div class="banner bannerMilestones" id="bannerMilestones1">
+						<p id="banner1PullCount">You have pulled from the Standard Banner 0 times</p>
+						<p id="banner1MilestoneLevel10">100 Pulls: New Hero on Banner! (Not yet implemented)</p>
+						<p id="banner1MilestoneLevel30">300 Pulls: New Hero on Banner! (NYI)</p>
+						<p id="banner1MilestoneLevel60">600 Pulls: New Hero on Banner! (NYI)</p>
+						<p id="banner1MilestoneLevel100">1000 Pulls: New Hero on Banner! (NYI)</p>
+					</div>
+				</div>
+				<div id="improvementBanner">
+					<p class="banner bannerText">Improvement Banner</p>
+					<img src="scuffed_assets/SlateBackground.png" class="background" alt="Grey Background">
+					<img src="scuffed_assets/auto_dungeon.png" class="banner bannerleft bannertop" alt="AUTO Dungeon">
+					<img src="scuffed_assets/auto_dungeon.png" class="banner bannerright bannertop" alt="AUTO Dungeon">
+					<img src="scuffed_assets/fast_trainer.png" class="banner bannerleft bannermiddle" alt="Fast Trainer">
+					<img src="scuffed_assets/fast_trainer.png" class="banner bannerright bannermiddle" alt="Fast Trainer">
+					<img src="scuffed_assets/auto_dungeon.png" class="banner bannerleft bannerbottom" alt="AUTO Claim">
+					<img src="scuffed_assets/auto_dungeon.png" class="banner bannerright bannerbottom" alt="AUTO Claim">
+					<img src="scuffed_assets/un_limiter.png" class="banner" id="decal1" alt="Unlimiter">
+					<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal2" alt="Bottled Experience">
+					<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal3" alt="Bottled Experience">
+					<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal4" alt="Bottled Experience">
+					<img src="scuffed_assets/bottled_exp.png" class="banner" id="decal5" alt="Bottled Experience">
+					<button class="banner bannerButton prevButton" id="prevBanner3" onClick="changeBanner(1)" disabled>Previous Banner</button>
+					<button class="banner bannerButton midButton" id="pullOnBanner3" onClick="pullBanner(2)" disabled>10 Gems</button>
+					<button class="banner bannerButton nextButton" id="nextBanner3" onClick="changeBanner(3)" disabled>Next Banner</button>
+					<button class="banner bannerButton2" id="milestonesButton2" onClick="showBannerMilestones(2)">Banner Milestones</button>
+					<div class="banner bannerMilestones" id="bannerMilestones2">
+						<p id="banner2PullCount">You have pulled from the Improvement Banner 0 times</p>
+						<p id="banner2MilestoneLevel5">50 Pulls: Permanent Daily Level 2</p>
+						<p id="banner2MilestoneLevel10">100 Pulls: 1 Super QoL Ticket!</p>
+						<p id="banner2MilestoneLevel15">150 Pulls: Permanent Daily Level 3</p>
+						<p id="banner2MilestoneLevel20">200 Pulls: Permanent Daily Level 4</p>
+						<p id="banner2MilestoneLevel25">250 Pulls: Permanent Daily Level 5</p>
+						<p id="banner2MilestoneLevel30">300 Pulls: 1 Super QoL Ticket!</p>
+						<p id="banner2MilestoneLevel50">500 Pulls: Permanent Daily Level 10</p>
+						<p id="banner2MilestoneLevel60">600 Pulls: 1 Super QoL Ticket!</p>
+					</div>
+				</div>
+				<div id="superBanner">
+					<p class="banner bannerText">Super Banner</p>
+					<img src="scuffed_assets/BlackBackground.png" class="background" alt="Black Background">
+					<img src="scuffed_assets/many_dungeon_ticket.png" class="banner bannerleft bannertop" alt="Many Dungeon Tickets">
+					<img src="scuffed_assets/ticket_trio.png" class="banner bannerright bannertop" alt="Ticket Trio">
+					<img src="scuffed_assets/protection_banner.png" class="banner bannerleft bannermiddle" alt="Banner 2">
+					<img src="scuffed_assets/un_limiter.png" class="banner bannerright bannermiddle" alt="Fast Trainer">
+					<img src="scuffed_assets/hero_picker.png" class="banner bannerleft bannerbottom" alt="Hero Picker">
+					<img src="scuffed_assets/prices_slashed.png" class="banner bannerright bannerbottom" alt="Prices Slashed">
+					<img src="scuffed_assets/several_super_gems.png" class="banner" id="decal1" alt="Super Gems">
+					<img src="scuffed_assets/super_gem.png" class="banner" id="decal2" alt="Super Gem">
+					<img src="scuffed_assets/super_gem.png" class="banner" id="decal3" alt="Super Gem">
+					<img src="scuffed_assets/super_gem.png" class="banner" id="decal4" alt="Super Gem">
+					<img src="scuffed_assets/super_gem.png" class="banner" id="decal5" alt="Super Gem">
+					<button class="banner bannerButton prevButton" id="prevBanner4" onClick="changeBanner(2)" disabled>Previous Banner</button>
+					<button class="banner bannerButton" id="pullOnBanner4" onClick="pullBanner(3)" disabled>100 S-Gems</button>
+					<button class="banner bannerButton nextButton" id="nextBanner4" onClick="changeBanner(4)" disabled>Next Banner</button>
+					<button class="banner bannerButton2" id="milestonesButton3" onClick="showBannerMilestones(3)">Banner Milestones</button>
+					<div class="banner bannerMilestones" id="bannerMilestones3">
+						<p id="banner3PullCount">You have pulled from the Super Banner 0 times</p>
+						<p id="banner3MilestoneLevel1">10 Pulls: '10 Pull' on all banners (Not yet implemented)</p>
+						<p id="banner3MilestoneLevel5">50 Pulls: Squad Boost 1! (NYI)</p>
+						<p id="banner3MilestoneLevel10">100 Pulls: '10+1 Pull' on all banners (NYI)</p>
+						<p id="banner3MilestoneLevel50">500 Pulls: Squad Boost 2! (NYI)</p>
+						<p id="banner3MilestoneLevel100">1000 Pulls: '100 Pull' on all banners (NYI)</p>
+						<p id="banner3MilestoneLevel500">5000 Pulls: Squad Boost 3! (NYI)</p>
+					</div>
+				</div>
+				<p class="banner" id="bannerReward"></p>
+			</div>
+			<div id="charCollection">
+				<div id="charList">
+					<p></p>
+				</div>
+				<div id="charStats">
+					<div>
+						<p></p>
+						<table>
+							<tr>
+								<th class="header">Name</th>
+								<th class="header">Stars</th>
+								<th class="header">Element</th>
+								<th class="header">Rank</th>
+								<th class="header">Level</th>
+								<th class="header">Experience</th>
+								<th class="header">Hitpoints</th>
+								<th class="header">Attack</th>
+								<th class="header">Defence</th>
+								<th class="header">Resistance</th>
+								<th class="header">Description</th>
+							</tr>
+							<tr>
+								<th id="display_name"></th>
+								<th id="display_stars"></th>
+								<th id="display_element"></th>
+								<th id="display_rank"></th>
+								<th id="display_lvl"></th>
+								<th id="display_xp"></th>
+								<th id="display_hp"></th>
+								<th id="display_atk"></th>
+								<th id="display_def"></th>
+								<th id="display_res"></th>
+								<th id="display_description"></th>
+							</tr>
+						</table>
+						<p></p>
+						<button id="selecthero" onclick="selectHero()">Select Hero (Max 3)</button>
+						<button id="trainhitpoints" onclick="trainHeroDisplay('hp')">Train Hitpoints</button>
+						<button id="trainattack" onclick="trainHeroDisplay('atk')">Train Attack</button>
+						<button id="traindefence" onclick="trainHeroDisplay('def')">Train Defence</button>
+						<button id="trainresistance" onclick="trainHeroDisplay('res')">Train Resistance</button>
+						<button id="rankupButton" onclick="rankUpDisplay()">Rank Up</button>
+						<button id="giveexp" onclick="giveHeroExp()" disabled>Give EXP</button>
+					</div>
+					<div id="heroTrain">
+						<p class="header" id="selectedStat">Hitpoints</p>
+						<p id="statCost">Cost: 10 Gold</p>
+						<p id="statChange">Increase: +10 Hitpoints</p>
+						<button id="trainStat" onclick="trainHero('hp')" disabled>Train</button>
+						<button id="fasttrainStat" onclick="fastTrainHero('hp')" disabled>Train x10</button>
+						<p id="trainCap"></p>
+					</div>
+					<div id="rankUp">
+						<p class="header" id="rankUpHeader">Rank Up</p>
+						<p id="rankUpLevelRequired">Level 1/10</p>
+						<p id="dupeCost">0/1 Duplicates</p>
+						<p id="unlimitCost">0/1 UN-LIMITERS</p>
+						<button id="rankUpConfirm" onclick="rankUpHero()" disabled>Rank Up!</button>
+					</div>
+					<div>
+						<p id="giveExpText"></p>
+					</div>
+				</div>
+			</div>
+			<div id="currencyCollection">
+				<div class="aligned" id="currencyCollectionLeft"></div>
+				<div class="aligned" id="currencyCollectionRight"></div>
+			</div>
+			<div id="prestigeMenu">
+				<p></p>
+				<p id="superGemCount">You currently have 0 Super Gems</p>
+				<p id="bestSuperGemCount">Your best ever Super Gems is 0: Multiplying Gold and EXP Gained by 1</p>
+				<p>Reset all progress for a massive boost!</p>
+				<p id="futureSuperGemCount">Receive 0 Super Gems</p>
+				<p id="futureHeroSuperGems">0 Super Gems from hero levels past 10</p>
+				<p id="futureDungeonSuperGems">0 Super Gems from dungeon levels cleared past 10</p>
+				<p id="superGemDayMulti">1x Multiplier for prestiging on day 365</p>
+				<p id="superGemDayScaling"></p>
+				<button id="prestigeConfirm" onclick="prestigeGame()" disabled>Prestige!</button>
+			</div>
+			<div id="settingsMenu">
+				<p></p>
+				<p id="versionText"></p>
+				<p></p>
+				<p id="importexporttext"></p>
+				<p></p>
+				<button onclick="import_save()">Import Save</button>
+				<input type="text" id="importbox">
+				<p></p>
+				<button onclick="export_save()">Export Save</button>
+				<input type="text" id="exportbox">
+				<p></p>
+				<button onclick="unlock_hard_reset()">HARD RESET</button>
+				<p></p>
+				<button id="truehardreset" class="red" onclick="hard_reset()" disabled>HARD RESET!!</button>
+				<p></p>
+				<p>Hotkeys:</p>
+				<p>N for Go Next</p>
+				<p>L for Collect Login Reward</p>
+				<p>U for Use Ticket</p>
+			</div>
 		</div>
 		<script src="main.js" charset="utf-8" type="text/javascript"></script>
 	</body>

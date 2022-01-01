@@ -8,6 +8,36 @@ th {
   color: whitesmoke
 }
 
+/* Center the loader */
+#loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 120px;
+  height: 120px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#contentDiv {
+  display: none;
+}
+
 .starterCrateText {
   position: absolute;
   top: 50px;
@@ -182,7 +212,7 @@ th {
   .dailyCalendar li {width: 12.2%;}
 }
 
-#bannerText {
+.bannerText {
   color: #4CAF50;
   float: right;
   margin-right: 17.5px;
@@ -195,12 +225,16 @@ th {
 	left: 12rem;
 }
 
-#pullOnBanner2 {
-	left: 15rem;
+.midButton {
+	left: 14.9rem;
 }
 
-#pullOnBanner3 {
-	left: 15rem;
+.midButton2 {
+	left: 15.2rem;
+}
+
+#pullOnBanner4 {
+  left: 14.3rem;
 }
 
 .prevButton {
@@ -420,6 +454,10 @@ progress:after {
 
 .white {
   color: whitesmoke;
+}
+
+.darkblue {
+  color: darkblue
 }
 
 .minheight {
