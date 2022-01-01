@@ -2206,11 +2206,13 @@ if (savegame !== null) {
 	document.getElementById("milestonesButton1").style.display = "none"
 	document.getElementById("milestonesButton2").style.display = "none"
 	document.getElementById("currency").style.display = "none"
+	document.getElementById("dailyRewardButton").disabled = false
 }
 
 /* MAIN? */
 tab("colDailyMenu")
 genCalendar()
+updateGold()
 checkDailyRewardLevel()
 document.getElementById("heroTrain").style.display = "none"
 document.getElementById("rankUp").style.display = "none"
