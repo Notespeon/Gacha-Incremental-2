@@ -559,7 +559,7 @@ function updateCurrencyPage() {
 			gameData.qolTicket = 1 - spentTickets
 		}
 	}
-	parent.appendChild(generateCurrencyElement("QoL Tickets", gameData.qolTicket))
+	parent.appendChild(generateCurrencyElement("Super QoL Tickets", gameData.qolTicket))
 	if (gameData.qolTicket > 0) {
 		let choiceText = document.createElement('p')
 		choiceText.setAttribute('class', 'green')
@@ -1464,7 +1464,7 @@ function pullBanner(id) {
 
 			//determine item reward
 			let rng = generateRandomNumber(0, 9)
-			let rewards = [0, 0, 1, 1, 2, 2, 3, 3, 4, 5]
+			let rewards = [0, 1, 2, 2, 2, 2, 3, 4, 4, 5]
 			let results_reward = rewards[rng]
 
 			if (results_reward == 0) {
@@ -1539,7 +1539,7 @@ function soft_reset() {
 
 	//tidy up gacha
 	document.getElementById("bannerReward").innerHTML = ""
-	document.getElementById("nextBanner1").disabled = false
+	document.getElementById("nextBanner1").disabled = true
 	document.getElementById("prevBanner2").disabled = false
 	if (gameData.prestigeCount == 0) {
 		document.getElementById("nextBanner2").disabled = true
@@ -1561,6 +1561,9 @@ function soft_reset() {
 	gameData.enemy = generateEnemy(gameData.enemysDefeated)
 	document.getElementById("theDungeon").style.display = "none"
 	document.getElementById("enemyStats").style.display = "none"
+	document.getElementById("levelUpReward2").innerHTML = ""
+	document.getElementById("levelUpReward2").innerHTML = ""
+	document.getElementById("levelUpReward3").innerHTML = ""
 }
 
 function unlock_hard_reset() {
