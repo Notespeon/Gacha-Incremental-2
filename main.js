@@ -398,7 +398,7 @@ function bottleGains(level) {
 		return 0.5*prestigeMulti*(2**(level-1))/downScaling
 	}*/
 
-	return gameData.bestEnemysDefeated*10*prestigeMulti
+	return (1+gameData.bestEnemysDefeated)*10*prestigeMulti
 }
 
 function giveHeroExp() {
@@ -474,19 +474,19 @@ function trainHero(stat) {
 
 function generateCurrencyElement(name, value) {
 	let currency = document.createElement('p')
-	currency.innerHTML = "You have " + value + " " + name
+	currency.innerHTML = "You have " + formatValue(value) + " " + name
 	return currency
 }
 
 function generateCurrencyElement2(name, value) {
 	let currency = document.createElement('p')
-	currency.innerHTML = "You have " + name + " " + value
+	currency.innerHTML = "You have " + name + " " + formatValue(value)
 	return currency
 }
 
 function generateCurrencyElement3(name, value) {
 	let currency = document.createElement('p')
-	currency.innerHTML = "You have " + name + " " + value + " times"
+	currency.innerHTML = "You have " + name + " " + formatValue(value) + " times"
 	return currency
 }
 
@@ -494,7 +494,7 @@ function generateDupeHeroString(name, value) {
 	let currency = document.createElement('p')
 	currency.innerHTML = "You have "
 	for (var i = 0; i < value.length; i++) {
-		currency.innerHTML += value[i]
+		currency.innerHTML += formatValue(value[i])
 		if ((i < value.length - 1) && value.length > 1) {
 			currency.innerHTML += ", "
 		} 
@@ -968,8 +968,13 @@ function grabDaily() {
 		}
 		updateGems()
 	} else if (gameData.day % 7 == 0) {
-		gameData.gems += 1
-		document.getElementById("dailyGemRewardText").innerHTML = "Received 1 Gem"
+		if (gameData.dailyLevel >= 10) {
+			gameData.gems += 5
+			document.getElementById("dailyGemRewardText").innerHTML = "Received 5 Gems"
+		} else {
+			gameData.gems += 1
+			document.getElementById("dailyGemRewardText").innerHTML = "Received 1 Gem"
+		}
 		updateGems()
 	} else if (gameData.day % 3 == 0) {
 		if (gameData.dailyLevel < 2) {
@@ -1863,17 +1868,17 @@ function checkImportedSaveFile(importedSave) {
 }
 
 function export_save() {
-	window.prompt("Copy to clipboard: Ctrl+C, Enter", btoa(JSON.stringify(gameData)))
+	//window.prompt("Copy to clipboard: Ctrl+C, Enter", btoa(JSON.stringify(gameData)))
+	document.getElementById("exportbox").value = btoa(JSON.stringify(gameData))
 }
 
 function import_save() {
-	let importedSave = window.prompt("Enter exported data", btoa(JSON.stringify(gameData)))
-
+	//let importedSave = window.prompt("Enter exported data", btoa(JSON.stringify(gameData)))
+	let importedSave = document.getElementById("importbox").value
 	if (importedSave !== null) {
 		try {
 			let decodedSave = atob(importedSave)
 			let parsedSave = JSON.parse(decodedSave)
-		
 			if (checkImportedSaveFile(parsedSave)) {
 				gameData = parsedSave
 				run_startup()
