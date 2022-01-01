@@ -434,8 +434,8 @@ function trainHero(stat) {
 	if (stat == 'hp') {
 		if (gameData.gold >= (100*(5**Math.floor(hero.hpupgradelevel/50)))) {
 			if (hero.hpupgradelevel < (hero.level*5 * (2**hero.rank))) {
-				hero.hpupgradelevel += 1
 				gameData.gold -= (100*(5**Math.floor(hero.hpupgradelevel/50)))
+				hero.hpupgradelevel += 1
 				updateHealth()
 			}
 		}
@@ -443,24 +443,24 @@ function trainHero(stat) {
 	if (stat == 'atk') {
 		if (gameData.gold >= (100*(5**Math.floor(hero.atkupgradelevel/50)))) {
 			if (hero.atkupgradelevel < (hero.level*5 * (2**hero.rank))) {
-				hero.atkupgradelevel += 1
 				gameData.gold -= (100*(5**Math.floor(hero.atkupgradelevel/50)))
+				hero.atkupgradelevel += 1
 			}
 		}
 	}
 	if (stat == 'def') {
 		if (gameData.gold >= (100*(5**Math.floor(hero.defupgradelevel/50)))) {
 			if (hero.defupgradelevel < (hero.level*5 * (2**hero.rank))) {
-				hero.defupgradelevel += 1
 				gameData.gold -= (100*(5**Math.floor(hero.defupgradelevel/50)))
+				hero.defupgradelevel += 1
 			}
 		}
 	}
 	if (stat == 'res') {
 		if (gameData.gold >= (100*(5**Math.floor(hero.resupgradelevel/50)))) {
 			if (hero.resupgradelevel < (hero.level*5 * (2**hero.rank))) {
-				hero.resupgradelevel += 1
 				gameData.gold -= (100*(5**Math.floor(hero.resupgradelevel/50)))
+				hero.resupgradelevel += 1
 			}
 		}
 	}
