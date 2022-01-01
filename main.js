@@ -803,7 +803,7 @@ function battleDefeat() {
 		//reward gems per level cleared, increasing per 5 levels
 		let rewardGems = 0
 		while(gameData.bestEnemysDefeated < gameData.enemysDefeated) {
-			rewardGems += 1 + Math.floor((1 + gameData.bestEnemysDefeated)/5)
+			rewardGems += 2**Math.floor((1 + gameData.bestEnemysDefeated)/5)
 			gameData.bestEnemysDefeated += 1
 		}
 
@@ -1488,9 +1488,8 @@ function pullBanner(id) {
 			} else if (results_reward == 5) {
 				gameData.dailyLevel += 1
 				document.getElementById("bannerReward").innerHTML = "Received 1 Daily Improvement, Increasing your Daily Level!"
-				checkDailyRewardLevel()
 			}
-
+			checkDailyRewardLevel()
 			//display these buttons after first pull on new banner
 			document.getElementById("autoClaimButton").style.display = "inline-block"
 			document.getElementById("autoDungeonButton").style.display = "inline-block"
@@ -1531,7 +1530,9 @@ function soft_reset() {
 		document.getElementById("currency").style.display = "none"
 	}
 	document.getElementById("autoClaimButton").disabled = true
+	document.getElementById("autoClaimButton").className = "unpressed"
 	document.getElementById("autoDungeonButton").disabled = true
+	document.getElementById("autoDungeonButton").className = "unpressed"
 
 	updateCollection()
 	document.getElementById("charStats").style.display = "none"
