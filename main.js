@@ -1342,7 +1342,7 @@ function prestigeGame() {
 		permFastTrainer: gameData.permFastTrainer,
 		luckyStreak: 0,
 		superRewards: gameData.superRewards,
-		heroPickerTickets: gameData.superRewards
+		heroPickerTickets: gameData.superRewards[5]
 	}
 
 	soft_reset()
