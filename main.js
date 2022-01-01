@@ -865,6 +865,10 @@ function autoDungeon() {
 }
 
 function grabDaily() {
+	if (gameData.loginObtained) {
+		return
+	}
+
 	let rng = generateRandomNumber(0, 1)
 	if (rng == 1) {
 		gameData.loginObtained = true
@@ -957,24 +961,6 @@ function grabDaily() {
 		}
 	}
 }
-
-//runs when n is pressed
-/*function doc_keyN(e) {
-    if (e.key === 78) {
-        incrementDay();
-    }
-}
-//register the handler 
-document.addEventListener('keyN', doc_keyN, false);
-
-//runs when l is pressed
-function doc_keyL(e) {
-    if (e.key === 76) {
-        grabDaily();
-    }
-}
-//register the handler 
-document.addEventListener('keyL', doc_keyL, false);*/
 
 document.onkeydown = function (e) {
 	var evt = window.event || e
@@ -1137,7 +1123,7 @@ function prestigeGame() {
 	let newDailyLevel = 1
 
 	if (gameData.pullCounts[2] >= 150) {
-		newDailyLevel = floor(gameData.pullCounts[2]/50)
+		newDailyLevel = Math.floor(gameData.pullCounts[2]/50)
 	} else if (gameData.pullCounts[2] >= 50) {
 		newDailyLevel = 2
 	} else {
@@ -1205,7 +1191,7 @@ function updateGems() {
 	
 		let newDailyLevel = 1
 		if (gameData.pullCounts[2] >= 150) {
-			newDailyLevel = floor(gameData.pullCounts[2]/50)
+			newDailyLevel = Math.floor(gameData.pullCounts[2]/50)
 		} else if (gameData.pullCounts[2] >= 50) {
 			newDailyLevel = 2
 		} else {
