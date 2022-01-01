@@ -1,5 +1,5 @@
 var gameData = {
-	version: 0.17,
+	version: 0.18,
 	gold: 100,
 	gems: 0,
 	superGems: 0,
@@ -109,7 +109,7 @@ function updateHeroStats(hero) {
 function checkPullMilestoneLevel(id) {
 	level = gameData.pullCounts[id]
 
-	for (var i = 0; i < 11; i++) {
+	for (var i = 0; i < 21; i++) {
 		let milestoneElement = document.getElementById("banner" + id + "MilestoneLevel" + (i*5))
 		if (typeof(milestoneElement) != 'undefined' && milestoneElement != null) {
 			if (level >= i*50) {
@@ -314,7 +314,7 @@ function trainHeroDisplay(stat) {
 		//enable button if conditions are met
 		if (gameData.gold >= (100*(5**Math.floor(hero.hpupgradelevel/50))) && hero.hpupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
-			if (gameData.fastTrainer > 0) {
+			if (gameData.fastTrainer > 0 || gameData.permFastTrainer) {
 				document.getElementById("fasttrainStat").disabled = false
 			}
 		}
@@ -334,7 +334,7 @@ function trainHeroDisplay(stat) {
 		//enable button if conditions are met
 		if (gameData.gold >= (100*(5**Math.floor(hero.atkupgradelevel/50))) && hero.atkupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
-			if (gameData.fastTrainer > 0) {
+			if (gameData.fastTrainer > 0 || gameData.permFastTrainer) {
 				document.getElementById("fasttrainStat").disabled = false
 			}
 		}
@@ -354,7 +354,7 @@ function trainHeroDisplay(stat) {
 		//enable button if conditions are met
 		if (gameData.gold >= (100*(5**Math.floor(hero.defupgradelevel/50))) && hero.defupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
-			if (gameData.fastTrainer > 0) {
+			if (gameData.fastTrainer > 0 || gameData.permFastTrainer) {
 				document.getElementById("fasttrainStat").disabled = false
 			}
 		}
@@ -374,7 +374,7 @@ function trainHeroDisplay(stat) {
 		//enable button if conditions are met
 		if (gameData.gold >= (100*(5**Math.floor(hero.resupgradelevel/50))) && hero.resupgradelevel < (hero.level*5 * (2**hero.rank))) {
 			document.getElementById("trainStat").disabled = false
-			if (gameData.fastTrainer > 0) {
+			if (gameData.fastTrainer > 0 || gameData.permFastTrainer) {
 				document.getElementById("fasttrainStat").disabled = false
 			}
 		}
@@ -418,7 +418,9 @@ function giveHeroExp() {
 }
 
 function fastTrainHero(stat) {
-	gameData.fastTrainer -= 1
+	if (!gameData.permFastTrainer) {
+		gameData.fastTrainer -= 1
+	}
 
 	for (var i = 0; i < 10; i++) {
 		trainHero(stat)
@@ -536,6 +538,71 @@ function updateCurrencyPage() {
 	if (gameData.prestigeCount > 0) {
 		parent.appendChild(generateCurrencyElement3("Prestiged", gameData.prestigeCount))
 	}
+	let spentTickets = 0
+	if (gameData.permAutoDungeon) {
+		spentTickets += 1
+	}
+	if (gameData.permAutoClaim) {
+		spentTickets += 1
+	}
+	if (gameData.permFastTrainer) {
+		spentTickets += 1
+	}
+	if (gameData.pullCounts[2] >= 100) {
+		if (gameData.pullCounts[2] >= 300) {
+			if (gameData.pullCounts[2] >= 600) {
+				gameData.qolTicket = 3 - spentTickets
+			} else {
+				gameData.qolTicket = 2 - spentTickets
+			}
+		} else {
+			gameData.qolTicket = 1 - spentTickets
+		}
+	}
+	parent.appendChild(generateCurrencyElement("QoL Tickets", gameData.qolTicket))
+	if (gameData.qolTicket > 0) {
+		let choiceText = document.createElement('p')
+		choiceText.setAttribute('class', 'green')
+		choiceText.innerHTML = 'Choose a QoL feature to make permanent (no takesbacks)'
+		parent.appendChild(choiceText)
+		if (!gameData.permAutoDungeon) {
+			let buttonA = document.createElement('button')
+			buttonA.setAttribute('onclick', 'makePermAuto("dungeon")')
+			buttonA.innerHTML = 'Dungeon'
+			parent.appendChild(buttonA)
+		}
+		if (!gameData.permAutoClaim) {
+			let buttonB = document.createElement('button')
+			buttonB.setAttribute('onclick', 'makePermAuto("daily")')
+			buttonB.innerHTML = 'Daily'
+			parent.appendChild(buttonB)
+		}
+		if (!gameData.permFastTrainer) {
+			let buttonC = document.createElement('button')
+			buttonC.setAttribute('onclick', 'makePermAuto("train")')
+			buttonC.innerHTML = 'Train'
+			parent.appendChild(buttonC)
+		}
+	}
+	
+	
+
+	/*
+	hero_image.setAttribute('id', 'heroColImage'+(i+1))
+	hero_image.setAttribute('onclick', 'showHeroStats('+(i)+')')
+	hero_image.setAttribute('class', 'hero_image')
+	*/
+}
+
+function makePermAuto(choice) {
+	if (choice == 'dungeon') {
+		gameData.permAutoDungeon = true
+	} else if (choice == 'daily') {
+		gameData.permAutoClaim = true
+	} else if (choice == 'train') {
+		gameData.permFastTrainer = true
+	}
+	updateCurrencyPage()
 }
 
 function genCalendar() {
@@ -658,7 +725,7 @@ function dungeonBattle() {
 	gameData.squad_stats = [0, 0, 0]
 
 	for (var i = 0; i < gameData.squad_heros.length; i++) {
-		let unit = gameData.owned_heros[gameData.squad_heros[0]]
+		let unit = gameData.owned_heros[gameData.squad_heros[i]]
 		gameData.squad_stats[0] += unit.attack
 		gameData.squad_stats[1] += unit.defence
 		gameData.squad_stats[2] += unit.resistance
@@ -829,15 +896,17 @@ var battleLoop = window.setInterval(function() {
 	}
 
 	//autodungeonLoop
-	if (!gameData.dungeonOpen && gameData.autoDungeon && gameData.autoDungeonTickets > 0) {
+	if (!gameData.dungeonOpen && gameData.autoDungeon && (gameData.autoDungeonTickets > 0 || gameData.permAutoDungeon)) {
 		if (gameData.autoDungeonDelay > 0) {
 			gameData.autoDungeonDelay -= 1
 		} else {
-			gameData.autoDungeonTickets -= 1
+			if (!gameData.permAutoDungeon) {
+				gameData.autoDungeonTickets -= 1
+			}
 			enterDungeon()
 		}
 	}
-	if (gameData.autoDungeon && gameData.autoDungeonTickets <= 0) {
+	if (gameData.autoDungeon && gameData.autoDungeonTickets <= 0 && !gameData.permAutoDungeon) {
 		document.getElementById("autoDungeonButton").className = "unpressed"
 		document.getElementById("autoDungeonButton").disabled = true
 		gameData.autoDungeon = false
@@ -1002,11 +1071,13 @@ function incrementDay() {
 	document.getElementById("dailyTicketRewardText").innerHTML = ""
 
 	//claim login reward automatically
-	if (gameData.autoDailyClaim > 0 && !gameData.loginObtained && gameData.autoClaim) {
-		gameData.autoDailyClaim -= 1
+	if ((gameData.autoDailyClaim > 0 || gameData.permAutoClaim) && !gameData.loginObtained && gameData.autoClaim) {
+		if (!gameData.permAutoClaim) {
+			gameData.autoDailyClaim -= 1
+		}
 		grabDaily()
 	}
-	if (gameData.autoClaim && gameData.autoDailyClaim <= 0) {
+	if (gameData.autoClaim && gameData.autoDailyClaim <= 0 && !gameData.permAutoClaim) {
 		document.getElementById("autoClaimButton").className = "unpressed"
 		document.getElementById("autoClaimButton").disabled = true
 		gameData.autoClaim = false
@@ -1130,9 +1201,19 @@ function prestigeGame() {
 		newDailyLevel = 1
 	}
 
+	if (!gameData.permAutoClaim) {
+		gameData.autoDailyClaim = 0
+	}
+	if (!gameData.permAutoDungeon) {
+		gameData.autoDungeonTickets = 0
+	}
+	if (!gameData.permFastTrainer) {
+		gameData.fastTrainer = 0
+	}
+
 	//reset everything
 	gameData = {
-		version: 0.17,
+		version: 0.18,
 		gold: 100,
 		gems: futureSuperGems,
 		superGems: newSuperGemCount,
@@ -1140,7 +1221,7 @@ function prestigeGame() {
 		day: 1,
 		dungeonTickets: 0,
 		autoDungeonTickets: 0, 
-		autoDailyClaim: 0,
+		autoDailyClaim: gameData.autoDailyClaim,
 		unLimiter: 0,
 		dailyLevel: newDailyLevel,
 		fastTrainer: 0,
@@ -1162,10 +1243,10 @@ function prestigeGame() {
 		autoDungeonDelay: 0,
 		autoClaim: false,
 		prestigeCount: newPrestigeCount,
-		qolTicket: 0,
-		permAutoDungeon: false,
-		permAutoClaim: false,
-		permFastTrainer: false,
+		qolTicket: gameData.qolTicket,
+		permAutoDungeon: gameData.permAutoDungeon,
+		permAutoClaim: gameData.permAutoClaim,
+		permFastTrainer: gameData.permFastTrainer,
 		luckyStreak: 0
 	}
 
@@ -1490,7 +1571,7 @@ function unlock_hard_reset() {
 function hard_reset() {
 	localStorage.clear()
 	gameData = {
-		version: 0.17,
+		version: 0.18,
 		gold: 100,
 		gems: 0,
 		superGems: 0,
@@ -1542,7 +1623,7 @@ function hard_reset() {
 //stops new versions from breaking old saves
 function checkSaveFile() {
 	if (typeof gameData.version === 'undefined') {
-		gameData.version = 0.17
+		gameData.version = 0.18
 	}
 	if (typeof gameData.gold === 'undefined') {
 		gameData.gold = 100
@@ -1764,7 +1845,7 @@ function checkImportedSaveFile(importedSave) {
 		return false
 	}
 	//all checks past this point need to also do a version check to allow backwards compatibility
-	if (importedSave.version < 0.17) {
+	if (importedSave.version < 0.17) { //this needs to stay 0.17
 		if (typeof importedSave.luckyStreak === 'undefined') {
 			importedSave.luckyStreak = 0
 		}
@@ -1807,7 +1888,7 @@ function run_startup() {
 	checkSaveFile()
 
 	//update version number
-	gameData.version = 0.17
+	gameData.version = 0.18
 
 	//update currencies
 	document.getElementById("currentDay").innerHTML = "Day " + formatValue(gameData.day)
@@ -1823,12 +1904,12 @@ function run_startup() {
 	}
 
 	//enable auto dungeon if available
-	if (gameData.autoDungeonTickets > 0) {
+	if (gameData.autoDungeonTickets > 0 || gameData.permAutoDungeon) {
 		document.getElementById("autoDungeonButton").disabled = false
 	}
 
 	//enable auto claim if available
-	if (gameData.autoDailyClaim > 0) {
+	if (gameData.autoDailyClaim > 0 || gameData.permAutoClaim) {
 		document.getElementById("autoClaimButton").disabled = false
 	}
 
@@ -1855,7 +1936,7 @@ function run_startup() {
 	}
 
 	if (gameData.autoDungeon) {
-		if (gameData.autoDungeonTickets > 0) {
+		if (gameData.autoDungeonTickets > 0 || gameData.permAutoDungeon) {
 			document.getElementById("autoDungeonButton").className = "pressed"
 		} else {
 			gameData.autoDungeon = false
@@ -1863,7 +1944,7 @@ function run_startup() {
 	}
 
 	if (gameData.autoClaim) {
-		if (gameData.autoDailyClaim > 0) {
+		if (gameData.autoDailyClaim > 0 || gameData.permAutoClaim) {
 			document.getElementById("autoClaimButton").className = "pressed"
 		} else {
 			gameData.autoClaim = false
