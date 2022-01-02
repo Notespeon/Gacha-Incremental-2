@@ -664,6 +664,7 @@ function free3Star(hero) {
 function makePermAuto(choice) {
 	if (choice == 'dungeon') {
 		gameData.permAutoDungeon = true
+		document.getElementById("autoDungeonButton").disabled = false
 	} else if (choice == 'daily') {
 		gameData.permAutoClaim = true
 	} else if (choice == 'train') {
@@ -1011,6 +1012,7 @@ function autoDungeon() {
 
 function grabDaily() {
 	if (gameData.loginObtained) {
+		document.getElementById("dailyRewardButton").disabled = true
 		return
 	}
 
@@ -1671,7 +1673,9 @@ function pullBanner(id) {
 
 function soft_reset() {
 	//reset daily progress
-	document.getElementById("dailyRewardButton").disabled = false
+	if (!gameData.loginObtained) {
+		document.getElementById("dailyRewardButton").disabled = false
+	}
 	genCalendar()
 	checkDailyRewardLevel()
 
@@ -1697,10 +1701,14 @@ function soft_reset() {
 		document.getElementById("dailyLevelMilestones").style.display = "none"
 		document.getElementById("currency").style.display = "none"
 	}
-	document.getElementById("autoClaimButton").disabled = true
-	document.getElementById("autoClaimButton").className = "unpressed"
-	document.getElementById("autoDungeonButton").disabled = true
-	document.getElementById("autoDungeonButton").className = "unpressed"
+	if (!gameData.permAutoClaim) {
+		document.getElementById("autoClaimButton").disabled = true
+		document.getElementById("autoClaimButton").className = "unpressed"
+	} 
+	if (!gameData.permAutoDungeon) {
+		document.getElementById("autoDungeonButton").disabled = true
+		document.getElementById("autoDungeonButton").className = "unpressed"
+	}
 
 	updateCollection()
 	document.getElementById("charStats").style.display = "none"
